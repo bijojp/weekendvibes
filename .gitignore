@@ -5,8 +5,11 @@ local.properties
 .idea/
 .DS_Store
 *.iml
+
+# Release signing material never enters the repo.
 *.jks
 *.keystore
+keystore.properties
 
 # Agent worktrees
 .claude/worktrees/

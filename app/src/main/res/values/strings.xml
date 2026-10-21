@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name" translatable="false">Weekend Vibes</string>
+
+    <!-- Common actions -->
+    <string name="action_add">Add</string>
+    <string name="action_add_activity">Add activity</string>
+    <string name="action_add_extra_day">Add extra day</string>
+    <string name="action_add_on_day">Add an activity on %1$s</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_back">Back</string>
+    <string name="action_jump_this_weekend">This weekend</string>
+    <string name="action_extra_day_options">Extra day options</string>
+    <string name="action_edit_label">Edit label</string>
+    <string name="action_remove_extra_day">Remove extra day</string>
+
+    <!-- Timeline -->
+    <string name="card_this_weekend">This weekend</string>
+    <string name="card_this_long_weekend">This long weekend</string>
+    <string name="card_long_weekend">Long weekend</string>
+    <string name="card_day_off">Day off</string>
+    <string name="day_nothing_planned">Nothing planned</string>
+
+    <!-- Extra days -->
+    <string name="extra_day_add_title">Add extra day</string>
+    <string name="extra_day_edit_title">Edit extra day</string>
+    <string name="extra_day_pick_date">Choose a weekday</string>
+    <string name="extra_day_help">A Friday or Monday joins the weekend next to it.</string>
+    <string name="field_label">Label (optional)</string>
+    <string name="field_label_hint">e.g. Diwali</string>
+    <string name="extra_day_remove_title">Remove extra day?</string>
+    <string name="extra_day_remove_body">%1$s will no longer be a free day.</string>
+    <plurals name="extra_day_remove_with_activities">
+        <item quantity="one">%1$s will no longer be a free day, and its activity will be deleted.</item>
+        <item quantity="other">%1$s will no longer be a free day, and its %2$d activities will be deleted.</item>
+    </plurals>
+
+    <!-- Editor -->
+    <string name="editor_new">New activity</string>
+    <string name="editor_edit">Edit activity</string>
+    <string name="field_title">Title</string>
+    <string name="field_title_hint">e.g. Hike at Nandi Hills</string>
+    <string name="field_date">Day</string>
+    <string name="field_date_becomes_extra">%1$s isn\'t a weekend, so saving will mark it as an extra day.</string>
+    <string name="field_time">Time</string>
+    <string name="field_time_on">At a set time</string>
+    <string name="field_details">Details</string>
+    <string name="field_location">Location</string>
+    <string name="field_link">Link</string>
+    <string name="field_notes">Notes</string>
+    <string name="delete_activity_title">Delete activity?</string>
+    <string name="delete_activity_body">“%1$s” will be deleted.</string>
+
+    <!-- Snackbar messages -->
+    <string name="msg_activity_added">Activity added</string>
+    <string name="msg_saved">Saved</string>
+    <string name="msg_activity_deleted">Activity deleted</string>
+    <string name="msg_extra_day_removed">Extra day removed</string>
+    <string name="msg_failed">Something went wrong</string>
+</resources>

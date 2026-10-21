@@ -1,0 +1,22 @@
+<!-- Launcher mark: a sun rising over two days (Sat, Sun). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M40,64A14,14 0,0 1,68 64"
+        android:strokeLineCap="round"
+        android:strokeWidth="5"
+        android:strokeColor="#FFFFFF" />
+    <path
+        android:pathData="M54,38L54,44M36,46L40,50M72,46L68,50"
+        android:strokeLineCap="round"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFF" />
+    <path
+        android:pathData="M32,72L76,72"
+        android:strokeLineCap="round"
+        android:strokeWidth="5"
+        android:strokeColor="#FFFFFF" />
+</vector>

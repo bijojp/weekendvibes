@@ -1,0 +1,6 @@
+<!-- Brand teal, the Saturday colour from the web version. -->
+<resources>
+    <color name="brand">#0F8B8D</color>
+    <color name="window_light">#F8FBFB</color>
+    <color name="window_dark">#111415</color>
+</resources>

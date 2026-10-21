@@ -89,7 +89,7 @@ Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kot
 
 ## 5. Build order
 
-**Status (2026-10-21):** docs agreed; starting step 1.
+**Status (2026-10-21):** steps 1–4 are built. Domain tests pass and lint has no errors. The app hasn't been run on a phone or emulator yet, so the next session starts by installing it, then step 5.
 
 | Step | Milestone | Done when |
 |---|---|---|

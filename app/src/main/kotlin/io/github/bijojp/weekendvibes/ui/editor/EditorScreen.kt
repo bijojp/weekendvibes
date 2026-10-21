@@ -53,6 +53,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -101,6 +102,8 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
     var dialog by remember { mutableStateOf<Dialog?>(null) }
     val titleFocus = remember { FocusRequester() }
     val uriHandler = LocalUriHandler.current
+    val scroll = rememberScrollState()
+    val focusManager = LocalFocusManager.current
 
     // Link import: read the page, then fill in whatever the user hasn't typed yet.
     var importState by remember { mutableStateOf<ImportState?>(if (route.importLink != null) ImportState.Reading else null) }
@@ -122,6 +125,13 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
             picture = draft.picture ?: result.picture,
         ).let { filled -> chosen?.let(filled::with) ?: filled }
         importState = ImportState.Read(runCatching { URI(link).host.removePrefix("www.") }.getOrNull() ?: link)
+    }
+
+    // While a link is read and once it's filled in, show the top: the status, the cover and the title.
+    LaunchedEffect(importState) {
+        if (importState == null) return@LaunchedEffect
+        focusManager.clearFocus()
+        scroll.animateScrollTo(0)
     }
 
     LaunchedEffect(Unit) {
@@ -153,7 +163,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
             Column(
                 Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scroll)
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 24.dp),
             ) {

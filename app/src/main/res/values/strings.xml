@@ -77,7 +77,10 @@
     <string name="add_activity_body">Pick a day and add what you\'re up to</string>
     <string name="add_extra_day">Mark a day off</string>
     <string name="add_extra_day_body">Holiday or leave? It joins your weekend</string>
-    <string name="add_share_tip">Found something on District, BookMyShow, Meetup or Luma? Share the link to Weekend Vibes and it fills itself in.</string>
+    <string name="add_link_hint">Paste an event link</string>
+    <string name="add_link_paste">Paste</string>
+    <string name="add_link_fill">Fill it in</string>
+    <string name="add_share_tip">Works with District, BookMyShow, HighApe, Meetup, Luma and more. You can also share a link to Weekend Vibes from any app.</string>
 
     <!-- Extra days -->
     <string name="extra_day_add_title">Mark a day off</string>

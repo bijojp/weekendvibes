@@ -230,6 +230,10 @@ fun TimelineScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
 
     if (adding) {
         AddSheet(
+            onImportLink = { link ->
+                adding = false
+                nav.open(EditorRoute(importLink = link))
+            },
             onAddActivity = {
                 adding = false
                 nav.open(EditorRoute())

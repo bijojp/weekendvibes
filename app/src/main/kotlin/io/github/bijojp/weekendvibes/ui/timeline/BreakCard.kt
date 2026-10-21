@@ -187,7 +187,8 @@ private fun PictureTile(activity: Activity, onOpen: (Activity) -> Unit) {
         Box(
             Modifier
                 .fillMaxSize()
-                .background(Brush.verticalGradient(0.35f to Color.Transparent, 1f to Color.Black.copy(alpha = 0.86f))),
+                // Strong enough that the title stays readable on bright posters with their own text.
+                .background(Brush.verticalGradient(0.2f to Color.Transparent, 0.55f to Color.Black.copy(alpha = 0.6f), 1f to Color.Black.copy(alpha = 0.92f))),
         )
         activity.time?.let { time ->
             Text(

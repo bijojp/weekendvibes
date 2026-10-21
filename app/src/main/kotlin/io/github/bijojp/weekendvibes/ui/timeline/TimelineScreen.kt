@@ -278,7 +278,8 @@ private fun TopBar(heroDirection: Int, onJump: () -> Unit, onSettings: () -> Uni
     Box(
         Modifier
             .fillMaxWidth()
-            .background(Brush.verticalGradient(listOf(colors.canvas, colors.canvas.copy(alpha = 0.85f), Color.Transparent)))
+            // Nearly solid behind the wordmark so pictures scrolling under it never fight it; fades only at the edge.
+            .background(Brush.verticalGradient(0f to colors.canvas, 0.72f to colors.canvas.copy(alpha = 0.96f), 1f to Color.Transparent))
             .statusBarsPadding()
             .padding(start = 24.dp, end = 16.dp, top = 8.dp, bottom = 20.dp),
     ) {

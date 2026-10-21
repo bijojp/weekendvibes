@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         viewModelFactory {
             initializer {
                 val container = (application as WeekendVibesApplication).container
-                WeekendVibesViewModel(container.agenda, container.settings, container.pictures, container.backups, container.links)
+                WeekendVibesViewModel(container.agenda, container.settings, container.pictures, container.backups, container.links, container.updates)
             }
         }
     }

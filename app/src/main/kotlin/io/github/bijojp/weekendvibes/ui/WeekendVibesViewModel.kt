@@ -12,11 +12,13 @@ import io.github.bijojp.weekendvibes.domain.ActivityFields
 import io.github.bijojp.weekendvibes.domain.ActivityId
 import io.github.bijojp.weekendvibes.domain.Agenda
 import io.github.bijojp.weekendvibes.domain.AgendaRepository
+import io.github.bijojp.weekendvibes.domain.Release
 import io.github.bijojp.weekendvibes.domain.Settings
 import io.github.bijojp.weekendvibes.domain.SettingsRepository
 import io.github.bijojp.weekendvibes.domain.eventpage.SharedText
 import io.github.bijojp.weekendvibes.imports.LinkImporter
 import io.github.bijojp.weekendvibes.imports.LinkResult
+import io.github.bijojp.weekendvibes.updates.UpdateChecker
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -43,6 +45,7 @@ class WeekendVibesViewModel(
     private val pictures: PictureStore,
     private val backups: Backups,
     private val links: LinkImporter,
+    private val updates: UpdateChecker,
 ) : ViewModel() {
     private val today = MutableStateFlow(LocalDate.now())
 
@@ -120,6 +123,10 @@ class WeekendVibesViewModel(
 
     /** Reads an event page for Link import; null when nothing could be found. */
     suspend fun readLink(link: String): LinkResult? = links.read(link)
+
+    /** Asks GitHub whether a newer version is out (ADR 0002): the release if so, null if this build is current. */
+    suspend fun checkForUpdate(): Result<Release?> =
+        runCatching { updates.newerRelease() }.onFailure { Log.w(TAG, "Update check failed", it) }
 
     fun backupFileName(): String = backups.suggestedFileName(LocalDate.now())
 

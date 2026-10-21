@@ -14,7 +14,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 1. **Weekends first.** The Timeline is built from Saturdays, Sundays and the Extra days the user marks; any other day shows only when it has plans, as a card of its own. Breaks are worked out from those dates, never stored. (ADR 0003)
 2. **One Activity, one day.** No recurrence, no multi-day Activities. (ADR 0003)
 3. **Data stays on the phone.** One user, no account, no sync, no backend, Android system backup off. Same stack as Weekly and ThingSpot. (ADR 0001)
-4. **The network is used for Link import and nothing else.** Only when the user shares a link in. No analytics, no background traffic. (ADR 0002)
+4. **The network is used for Link import and Check for updates, nothing else.** Only when the user shares a link in or taps Check for updates. No analytics, no background traffic. (ADR 0002)
 
 ## 2. Scope
 
@@ -28,7 +28,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 | Pictures | One per Activity. From Link import (downloaded, scaled to at most 1080 px) or from Android's photo picker (no storage permission). Thumbnail in the card, full size in the editor. |
 | Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms like Weekly, so up to 10 minutes late and no exact-alarm permission. |
 | Link import | Appears in Android's share sheet. Takes the first URL in the shared text and follows redirects. Opens the Activity form pre-filled; the link is always kept even if nothing else is found, and failures offer Retry. Details in §3. |
-| Settings | Digest on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About. |
+| Settings | Digest on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About with **Check for updates** (asks GitHub for the latest release when tapped and opens its download page if it's newer; added 2026-10-21). |
 | Backup | **Back up** saves one zip (`data.json` plus a `pictures/` folder) wherever the user chooses. **Restore** replaces all data after a confirmation. (ADR 0004) |
 | Look and feel | Premium and editorial rather than stock Material: a near-black canvas (cool paper in light mode) with slow drifting glows, Fraunces (serif, soft, large optical size) for headlines and big date numerals, Manrope for everything else, and one "Monsoon" accent gradient, lime → mint → teal, used for This weekend and the main actions (chosen 2026-10-21 over golden hour, champagne, terracotta, citrus and neon lime). Saturday mint, Sunday sun-yellow, Extra days sky blue. Plans with a Picture are full-bleed tiles; empty days are dashed "Free · tap to plan" tiles. Cards sink slightly under the finger with a haptic tick. English only. |
 

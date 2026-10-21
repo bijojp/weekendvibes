@@ -6,6 +6,7 @@ import io.github.bijojp.weekendvibes.data.WeekendVibesData
 import io.github.bijojp.weekendvibes.imports.LinkImporter
 import io.github.bijojp.weekendvibes.reminders.Notifications
 import io.github.bijojp.weekendvibes.reminders.ReminderScheduler
+import io.github.bijojp.weekendvibes.updates.UpdateChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -46,4 +47,5 @@ class AppContainer(context: Context) {
     val pictures get() = data.pictures
     val backups get() = data.backups
     val links by lazy { LinkImporter(context, data.pictures) }
+    val updates by lazy { UpdateChecker(BuildConfig.VERSION_NAME) }
 }

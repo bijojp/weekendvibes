@@ -56,3 +56,8 @@ The city whose venues are offered first when an event page lists many (Settings;
 
 **Backup**:
 One zip file (data plus Pictures) that the user saves anywhere and can restore from, replacing everything.
+
+### Keeping the app current
+
+**Check for updates**:
+Tapping the row in Settings: the app asks GitHub for the latest release and, if it's newer than the installed version, offers to open its download page. Never done on its own; the app doesn't download or install anything itself.

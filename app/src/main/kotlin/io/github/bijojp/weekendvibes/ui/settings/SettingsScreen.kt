@@ -35,9 +35,11 @@ import androidx.compose.material.icons.rounded.LocationCity
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material.icons.rounded.Restore
+import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -45,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +60,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -69,6 +74,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.bijojp.weekendvibes.BuildConfig
 import io.github.bijojp.weekendvibes.R
+import io.github.bijojp.weekendvibes.domain.Release
 import io.github.bijojp.weekendvibes.domain.ThemeMode
 import io.github.bijojp.weekendvibes.reminders.Notifications
 import io.github.bijojp.weekendvibes.ui.LocalSnackbarHostState
@@ -83,6 +89,8 @@ import io.github.bijojp.weekendvibes.ui.components.Overline
 import io.github.bijojp.weekendvibes.ui.components.VibeTextField
 import io.github.bijojp.weekendvibes.ui.components.pressable
 import io.github.bijojp.weekendvibes.ui.theme.Vibes
+import io.github.bijojp.weekendvibes.updates.UpdateChecker
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
@@ -94,6 +102,34 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { canPost = Notifications.canPost(context) }
     var homeCity by remember { mutableStateOf(settings.homeCity) }
     var restoreFrom by remember { mutableStateOf<Uri?>(null) }
+    var checkingForUpdate by remember { mutableStateOf(false) }
+    var update by remember { mutableStateOf<Release?>(null) }
+    val scope = rememberCoroutineScope()
+    val snackbar = LocalSnackbarHostState.current
+    val uriHandler = LocalUriHandler.current
+    val resources = LocalResources.current
+
+    // Asks GitHub only now, when tapped (ADR 0002). A newer release opens a dialog; otherwise a snackbar says why not.
+    fun checkForUpdate() {
+        if (checkingForUpdate) return
+        checkingForUpdate = true
+        scope.launch {
+            val result = viewModel.checkForUpdate()
+            checkingForUpdate = false
+            snackbar.currentSnackbarData?.dismiss()
+            result
+                .onSuccess { release ->
+                    if (release != null) update = release else snackbar.showSnackbar(resources.getString(R.string.msg_up_to_date))
+                }
+                .onFailure {
+                    val choice = snackbar.showSnackbar(
+                        resources.getString(R.string.msg_update_check_failed),
+                        actionLabel = resources.getString(R.string.action_open_releases),
+                    )
+                    if (choice == SnackbarResult.ActionPerformed) runCatching { uriHandler.openUri(UpdateChecker.RELEASES_PAGE) }
+                }
+        }
+    }
 
     val backUp = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
         if (uri != null) viewModel.backUp(uri)
@@ -194,12 +230,19 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
                 )
             }
 
-            Overline(stringResource(R.string.settings_about), modifier = Modifier.padding(start = 4.dp, top = 28.dp, bottom = 10.dp))
+            Section(stringResource(R.string.settings_about)) {
+                ActionRow(
+                    icon = Icons.Rounded.SystemUpdate,
+                    title = stringResource(if (checkingForUpdate) R.string.settings_update_checking else R.string.settings_update),
+                    body = stringResource(R.string.settings_update_body, BuildConfig.VERSION_NAME),
+                    onClick = ::checkForUpdate,
+                )
+            }
             Text(
-                stringResource(R.string.settings_about_body, BuildConfig.VERSION_NAME),
+                stringResource(R.string.settings_about_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.textSoft,
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 4.dp).padding(top = 14.dp),
             )
             Spacer(Modifier.height(6.dp))
             Text(
@@ -219,6 +262,17 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
             confirm = stringResource(R.string.action_restore),
             onConfirm = { viewModel.restore(uri) },
             onDismiss = { restoreFrom = null },
+        )
+    }
+
+    update?.let { release ->
+        ConfirmDialog(
+            title = stringResource(R.string.update_title, release.version),
+            body = stringResource(R.string.update_body, BuildConfig.VERSION_NAME),
+            confirm = stringResource(R.string.action_open_download_page),
+            onConfirm = { runCatching { uriHandler.openUri(release.page) } },
+            onDismiss = { update = null },
+            danger = false,
         )
     }
 }

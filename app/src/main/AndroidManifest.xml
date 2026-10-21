@@ -3,13 +3,14 @@
     Android manifest for Weekend Vibes.
 
     Privacy notes (ADR 0001, ADR 0002):
-    - INTERNET is used only to read event links the user shares in, and their pictures.
+    - INTERNET is used only to read event links the user shares in, and their pictures, and to
+      ask GitHub for the latest release when the user taps Check for updates.
     - Android's cloud backup and phone-to-phone transfer are off. Data leaves the phone only as a
       backup file the user saves themselves.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Link import only (ADR 0002). -->
+    <!-- Link import and Check for updates only (ADR 0002). -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Weekend digest and Reminders. Asked for once, on first launch. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

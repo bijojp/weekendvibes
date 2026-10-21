@@ -47,9 +47,9 @@ fun VibeSheet(title: String, onDismiss: () -> Unit, content: @Composable ColumnS
     }
 }
 
-/** A confirmation with a serif title and a red-tinted confirm. */
+/** A confirmation with a serif title and a red-tinted confirm, or an accent one when nothing is lost. */
 @Composable
-fun ConfirmDialog(title: String, body: String, confirm: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+fun ConfirmDialog(title: String, body: String, confirm: String, onConfirm: () -> Unit, onDismiss: () -> Unit, danger: Boolean = true) {
     val colors = Vibes.colors
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -63,7 +63,7 @@ fun ConfirmDialog(title: String, body: String, confirm: String, onConfirm: () ->
                     onConfirm()
                     onDismiss()
                 },
-            ) { Text(confirm, color = colors.danger, style = MaterialTheme.typography.labelLarge) }
+            ) { Text(confirm, color = if (danger) colors.danger else colors.accentMid, style = MaterialTheme.typography.labelLarge) }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel), color = colors.textSoft) }

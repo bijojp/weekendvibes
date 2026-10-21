@@ -12,7 +12,7 @@ import java.nio.charset.Charset
 /** A fetched page: where it ended up after redirects, its HTTP status and its text. */
 data class Fetched(val url: String, val status: Int, val html: String)
 
-/** Plain HTTP GETs for Link import (ADR 0002). Only http(s), redirects followed by hand, sizes capped. */
+/** Plain HTTP GETs for Link import and Check for updates (ADR 0002). Only http(s), redirects followed by hand, sizes capped. */
 internal object PageFetcher {
     private const val MAX_REDIRECTS = 6
     private const val MAX_PAGE_BYTES = 4 * 1024 * 1024
@@ -23,6 +23,13 @@ internal object PageFetcher {
     suspend fun page(url: String, userAgent: String): Fetched = withContext(Dispatchers.IO) {
         get(url, userAgent, accept = "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8", limit = MAX_PAGE_BYTES) { final, status, bytes, type ->
             Fetched(final, status, String(bytes, charsetOf(type)))
+        }
+    }
+
+    /** A JSON answer, such as GitHub's latest release for Check for updates. */
+    suspend fun json(url: String, userAgent: String): Fetched = withContext(Dispatchers.IO) {
+        get(url, userAgent, accept = "application/json", limit = MAX_PAGE_BYTES) { final, status, bytes, _ ->
+            Fetched(final, status, String(bytes, Charsets.UTF_8))
         }
     }
 

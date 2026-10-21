@@ -1,6 +1,6 @@
 // App module build file.
 // No Firebase, no Google Play Services, no analytics SDKs (ADR 0001).
-// INTERNET is used only for Link import (ADR 0002).
+// INTERNET is used only for Link import and Check for updates (ADR 0002).
 import java.util.Properties
 
 plugins {

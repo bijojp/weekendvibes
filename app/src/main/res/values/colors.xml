@@ -1,5 +1,5 @@
 <!-- Window colours, matching the Compose canvas so launch doesn't flash. -->
 <resources>
-    <color name="window_light">#F7F2EA</color>
+    <color name="window_light">#F3F5F0</color>
     <color name="window_dark">#09090B</color>
 </resources>

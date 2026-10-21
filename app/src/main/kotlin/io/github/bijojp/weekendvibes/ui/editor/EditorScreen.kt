@@ -78,7 +78,7 @@ import io.github.bijojp.weekendvibes.ui.components.FieldCard
 import io.github.bijojp.weekendvibes.ui.components.FieldDivider
 import io.github.bijojp.weekendvibes.ui.components.Overline
 import io.github.bijojp.weekendvibes.ui.components.Pill
-import io.github.bijojp.weekendvibes.ui.components.SunsetButton
+import io.github.bijojp.weekendvibes.ui.components.AccentButton
 import io.github.bijojp.weekendvibes.ui.components.TimePickerDialog
 import io.github.bijojp.weekendvibes.ui.components.VibeTextField
 import io.github.bijojp.weekendvibes.ui.components.mediumDay
@@ -222,7 +222,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
                                 Pill(
                                     text = stringResource(label),
                                     selected = draft.reminder == lead,
-                                    accent = colors.sunsetMid,
+                                    accent = colors.accentMid,
                                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 9.dp),
                                     onClick = { draft = draft.copy(reminder = lead) },
                                 )
@@ -283,7 +283,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
                     .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 12.dp),
             ) {
-                SunsetButton(
+                AccentButton(
                     text = stringResource(if (existing == null) R.string.editor_save_new else R.string.editor_save_edit),
                     enabled = draft.canSave,
                     onClick = ::save,

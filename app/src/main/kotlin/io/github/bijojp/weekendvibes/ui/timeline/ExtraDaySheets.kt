@@ -28,7 +28,7 @@ import io.github.bijojp.weekendvibes.ui.components.ConfirmDialog
 import io.github.bijojp.weekendvibes.ui.components.DatePickerDialog
 import io.github.bijojp.weekendvibes.ui.components.FieldCard
 import io.github.bijojp.weekendvibes.ui.components.Pill
-import io.github.bijojp.weekendvibes.ui.components.SunsetButton
+import io.github.bijojp.weekendvibes.ui.components.AccentButton
 import io.github.bijojp.weekendvibes.ui.components.VibeSheet
 import io.github.bijojp.weekendvibes.ui.components.VibeTextField
 import io.github.bijojp.weekendvibes.ui.components.longDay
@@ -77,7 +77,7 @@ fun ExtraDaySheet(
             )
         }
         Spacer(Modifier.height(24.dp))
-        SunsetButton(
+        AccentButton(
             text = stringResource(R.string.action_save),
             enabled = date != null,
             onClick = {

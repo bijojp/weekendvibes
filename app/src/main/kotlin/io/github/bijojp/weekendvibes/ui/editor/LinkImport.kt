@@ -73,7 +73,7 @@ internal fun ImportPanel(
             base.background(shimmerBrush()).border(1.dp, colors.hairline, shape).padding(18.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = colors.sunsetStart, modifier = Modifier.size(20.dp))
+            Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = colors.accentStart, modifier = Modifier.size(20.dp))
             Text(stringResource(R.string.import_reading), style = MaterialTheme.typography.titleSmall, color = colors.text, modifier = Modifier.padding(start = 12.dp))
         }
         ImportState.Failed -> Column(base.background(colors.raised).border(1.dp, colors.hairline, shape).padding(18.dp)) {
@@ -147,8 +147,8 @@ internal fun OptionsSheet(
                     Modifier
                         .fillMaxWidth()
                         .clip(shape)
-                        .background(if (isSelected) colors.sunsetMid.copy(alpha = 0.12f) else colors.raised)
-                        .border(1.dp, if (isSelected) colors.sunsetMid.copy(alpha = 0.6f) else colors.hairline, shape)
+                        .background(if (isSelected) colors.accentMid.copy(alpha = 0.12f) else colors.raised)
+                        .border(1.dp, if (isSelected) colors.accentMid.copy(alpha = 0.6f) else colors.hairline, shape)
                         .pressable {
                             onPick(option)
                             onDismiss()

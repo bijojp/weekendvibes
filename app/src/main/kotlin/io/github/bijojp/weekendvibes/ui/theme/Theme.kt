@@ -22,8 +22,9 @@ import io.github.bijojp.weekendvibes.R
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-// The look: a warm near-black canvas, an editorial serif for anything worth reading twice, a crisp
-// sans for everything else, and one signature "golden hour" gradient used sparingly.
+// The look: a near-black canvas (cool paper in light mode), an editorial serif for anything worth
+// reading twice, a crisp sans for everything else, and one "Monsoon" accent, lime to mint to teal,
+// used sparingly. Chosen from a palette comparison on 2026-10-21.
 
 /** Colours beyond Material's roles. Read them with [Vibes.colors]. */
 @Immutable
@@ -38,17 +39,17 @@ data class VibesColors(
     val saturday: Color,
     val sunday: Color,
     val extra: Color,
-    val sunsetStart: Color,
-    val sunsetMid: Color,
-    val sunsetEnd: Color,
-    val onSunset: Color,
+    val accentStart: Color,
+    val accentMid: Color,
+    val accentEnd: Color,
+    val onAccent: Color,
     val glowWarm: Color,
     val glowCool: Color,
     val danger: Color,
     val isDark: Boolean,
 ) {
     /** The signature gradient: buttons, This weekend, the hero. */
-    val sunset: Brush get() = Brush.linearGradient(listOf(sunsetStart, sunsetMid, sunsetEnd))
+    val accent: Brush get() = Brush.linearGradient(listOf(accentStart, accentMid, accentEnd))
 
     /** The colour a kind of Free day is labelled in. */
     fun dayColor(date: LocalDate): Color = when (date.dayOfWeek) {
@@ -66,36 +67,37 @@ private val Night = VibesColors(
     text = Color(0xFFF6F1E9),
     textSoft = Color(0xFFB4ADA3),
     textFaint = Color(0xFF6F6A64),
-    saturday = Color(0xFF6FE3CF),
-    sunday = Color(0xFFFF86A8),
-    extra = Color(0xFFFFC46B),
-    sunsetStart = Color(0xFFFFC36B),
-    sunsetMid = Color(0xFFFF7A6B),
-    sunsetEnd = Color(0xFFFF4F8B),
-    onSunset = Color(0xFF1A0E0A),
-    glowWarm = Color(0xFFFF7A4D),
-    glowCool = Color(0xFF7B5CFF),
+    saturday = Color(0xFF7EEBC0),
+    sunday = Color(0xFFFFE08A),
+    extra = Color(0xFF8EC5FF),
+    accentStart = Color(0xFFE3FBA8),
+    accentMid = Color(0xFF7EEBC0),
+    accentEnd = Color(0xFF2CC9B5),
+    onAccent = Color(0xFF06201C),
+    glowWarm = Color(0xFF2CC9B5),
+    glowCool = Color(0xFF96E678),
     danger = Color(0xFFFF6B6B),
     isDark = true,
 )
 
+// Deeper takes on the same hues, so gradient text and day labels stay readable on paper.
 private val Day = VibesColors(
-    canvas = Color(0xFFF7F2EA),
-    surface = Color(0xFFFFFCF7),
-    raised = Color(0xFFF1EBE1),
-    hairline = Color(0x1A1A140C),
-    text = Color(0xFF1B1712),
-    textSoft = Color(0xFF6B6359),
-    textFaint = Color(0xFFA39A8E),
-    saturday = Color(0xFF0E8C7A),
-    sunday = Color(0xFFD23D6E),
-    extra = Color(0xFFB86E00),
-    sunsetStart = Color(0xFFFFB45A),
-    sunsetMid = Color(0xFFFF6A55),
-    sunsetEnd = Color(0xFFF23E7D),
-    onSunset = Color(0xFF1A0E0A),
-    glowWarm = Color(0xFFFFB27A),
-    glowCool = Color(0xFFB7A6FF),
+    canvas = Color(0xFFF3F5F0),
+    surface = Color(0xFFFCFDFB),
+    raised = Color(0xFFE9EEE7),
+    hairline = Color(0x1A0F1A14),
+    text = Color(0xFF121814),
+    textSoft = Color(0xFF56625A),
+    textFaint = Color(0xFF8E9A92),
+    saturday = Color(0xFF0E8F6E),
+    sunday = Color(0xFFA67A00),
+    extra = Color(0xFF2F6FD0),
+    accentStart = Color(0xFF9BD84A),
+    accentMid = Color(0xFF2FBF8F),
+    accentEnd = Color(0xFF0E9C94),
+    onAccent = Color(0xFF04211D),
+    glowWarm = Color(0xFF6FD9C0),
+    glowCool = Color(0xFFC8EE8E),
     danger = Color(0xFFD03A3A),
     isDark = false,
 )
@@ -158,8 +160,8 @@ fun WeekendVibesTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
     val colors = if (darkTheme) Night else Day
     val scheme = if (darkTheme) {
         darkColorScheme(
-            primary = colors.sunsetMid,
-            onPrimary = colors.onSunset,
+            primary = colors.accentMid,
+            onPrimary = colors.onAccent,
             secondary = colors.saturday,
             background = colors.canvas,
             onBackground = colors.text,
@@ -176,8 +178,8 @@ fun WeekendVibesTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
         )
     } else {
         lightColorScheme(
-            primary = colors.sunsetMid,
-            onPrimary = colors.onSunset,
+            primary = colors.accentEnd,
+            onPrimary = Color.White,
             secondary = colors.saturday,
             background = colors.canvas,
             onBackground = colors.text,

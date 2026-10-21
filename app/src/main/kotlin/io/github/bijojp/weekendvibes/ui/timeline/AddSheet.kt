@@ -51,7 +51,7 @@ import io.github.bijojp.weekendvibes.domain.Limits
 import io.github.bijojp.weekendvibes.domain.eventpage.SharedText
 import io.github.bijojp.weekendvibes.ui.components.FieldCard
 import io.github.bijojp.weekendvibes.ui.components.Pill
-import io.github.bijojp.weekendvibes.ui.components.SunsetButton
+import io.github.bijojp.weekendvibes.ui.components.AccentButton
 import io.github.bijojp.weekendvibes.ui.components.VibeSheet
 import io.github.bijojp.weekendvibes.ui.components.VibeTextField
 import io.github.bijojp.weekendvibes.ui.components.pressable
@@ -67,7 +67,7 @@ fun AddSheet(onImportLink: (String) -> Unit, onAddActivity: () -> Unit, onAddExt
         Spacer(Modifier.height(16.dp))
         Choice(
             icon = Icons.Rounded.AutoAwesome,
-            tint = Brush.linearGradient(listOf(colors.sunsetStart, colors.sunsetEnd)),
+            tint = Brush.linearGradient(listOf(colors.accentStart, colors.accentEnd)),
             title = stringResource(R.string.add_activity),
             body = stringResource(R.string.add_activity_body),
             onClick = onAddActivity,
@@ -133,7 +133,7 @@ private fun LinkBox(onImportLink: (String) -> Unit) {
         )
     }
     AnimatedVisibility(link != null, enter = fadeIn() + expandVertically(), exit = fadeOut() + shrinkVertically()) {
-        SunsetButton(
+        AccentButton(
             text = stringResource(R.string.add_link_fill),
             icon = Icons.Rounded.AutoAwesome,
             onClick = { go() },

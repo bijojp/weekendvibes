@@ -69,7 +69,7 @@ fun Backdrop(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> 
         animationSpec = infiniteRepeatable(tween(14_000, easing = LinearEasing), RepeatMode.Reverse),
         label = "drift",
     )
-    val strength = if (colors.isDark) 0.22f else 0.30f
+    val strength = if (colors.isDark) 0.24f else 0.30f
     Box(
         modifier
             .fillMaxSize()
@@ -83,7 +83,7 @@ fun Backdrop(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> 
                 )
                 val cool = Offset(size.width * (0.05f + 0.12f * drift), size.height * (0.12f - 0.03f * drift))
                 drawCircle(
-                    Brush.radialGradient(listOf(colors.glowCool.copy(alpha = strength * 0.7f), Color.Transparent), cool, size.width * 0.75f),
+                    Brush.radialGradient(listOf(colors.glowCool.copy(alpha = strength * 0.55f), Color.Transparent), cool, size.width * 0.75f),
                     radius = size.width * 0.75f,
                     center = cool,
                 )
@@ -106,7 +106,7 @@ fun Modifier.pressable(enabled: Boolean = true, onLongClick: (() -> Unit)? = nul
         }
 }
 
-/** A rounded panel. [highlighted] gives it the sunset edge and glow (This weekend). */
+/** A rounded panel. [highlighted] gives it the accent edge and glow (This weekend). */
 @Composable
 fun VibeCard(
     modifier: Modifier = Modifier,
@@ -116,7 +116,7 @@ fun VibeCard(
 ) {
     val colors = Vibes.colors
     val edge = if (highlighted) {
-        colors.sunset
+        colors.accent
     } else {
         Brush.verticalGradient(listOf(colors.hairline.copy(alpha = colors.hairline.alpha * 1.6f), colors.hairline.copy(alpha = 0.02f)))
     }
@@ -124,7 +124,7 @@ fun VibeCard(
         modifier
             .then(
                 if (highlighted) {
-                    Modifier.shadow(28.dp, shape, ambientColor = colors.sunsetMid, spotColor = colors.sunsetEnd)
+                    Modifier.shadow(28.dp, shape, ambientColor = colors.accentMid, spotColor = colors.accentEnd)
                 } else {
                     Modifier
                 },
@@ -147,9 +147,9 @@ fun Overline(text: String, modifier: Modifier = Modifier, color: Color = Vibes.c
     )
 }
 
-/** The main call to action: a sunset pill with dark text. */
+/** The main call to action: an accent pill with dark text. */
 @Composable
-fun SunsetButton(
+fun AccentButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -161,15 +161,15 @@ fun SunsetButton(
     Row(
         modifier
             .height(height)
-            .then(if (enabled) Modifier.shadow(18.dp, CircleShape, ambientColor = colors.sunsetMid, spotColor = colors.sunsetEnd) else Modifier)
+            .then(if (enabled) Modifier.shadow(18.dp, CircleShape, ambientColor = colors.accentMid, spotColor = colors.accentEnd) else Modifier)
             .clip(CircleShape)
-            .background(if (enabled) colors.sunset else Brush.linearGradient(listOf(colors.raised, colors.raised)))
+            .background(if (enabled) colors.accent else Brush.linearGradient(listOf(colors.raised, colors.raised)))
             .pressable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        val content = if (enabled) colors.onSunset else colors.textFaint
+        val content = if (enabled) colors.onAccent else colors.textFaint
         if (icon != null) {
             Icon(icon, contentDescription = null, tint = content, modifier = Modifier.size(20.dp))
             Box(Modifier.size(8.dp))
@@ -248,7 +248,7 @@ fun shimmerBrush(): Brush {
         label = "x",
     )
     return Brush.linearGradient(
-        listOf(colors.raised, colors.sunsetMid.copy(alpha = 0.25f), colors.raised),
+        listOf(colors.raised, colors.accentMid.copy(alpha = 0.25f), colors.raised),
         start = Offset(x, 0f),
         end = Offset(x + 600f, 300f),
     )

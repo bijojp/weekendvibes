@@ -72,7 +72,7 @@ fun VibeTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         textStyle = textStyle.copy(color = colors.text),
-        cursorBrush = SolidColor(colors.sunsetMid),
+        cursorBrush = SolidColor(colors.accentMid),
         modifier = modifier.fillMaxWidth(),
         decorationBox = { inner ->
             Row(Modifier.padding(horizontal = 16.dp, vertical = 14.dp), verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top) {

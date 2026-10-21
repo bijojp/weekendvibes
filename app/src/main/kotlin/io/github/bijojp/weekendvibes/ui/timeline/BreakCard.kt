@@ -85,7 +85,7 @@ fun BreakCardView(
             Row(verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f)) {
                     if (card.isThisWeekend) {
-                        Overline(kicker(card), brush = colors.sunset)
+                        Overline(kicker(card), brush = colors.accent)
                     } else {
                         Overline(kicker(card), color = if (card.days.any { it.extraDay != null } && !card.span.isWeekend) colors.extra else colors.textSoft)
                     }

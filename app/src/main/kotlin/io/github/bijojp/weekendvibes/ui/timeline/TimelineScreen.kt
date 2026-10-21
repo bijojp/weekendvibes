@@ -71,7 +71,7 @@ import io.github.bijojp.weekendvibes.ui.components.Backdrop
 import io.github.bijojp.weekendvibes.ui.components.CircleIconButton
 import io.github.bijojp.weekendvibes.ui.components.Overline
 import io.github.bijojp.weekendvibes.ui.components.Pill
-import io.github.bijojp.weekendvibes.ui.components.SunsetButton
+import io.github.bijojp.weekendvibes.ui.components.AccentButton
 import io.github.bijojp.weekendvibes.ui.components.breakRange
 import io.github.bijojp.weekendvibes.ui.components.monthName
 import io.github.bijojp.weekendvibes.ui.theme.Display
@@ -218,7 +218,7 @@ fun TimelineScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
                 .height(150.dp)
                 .background(Brush.verticalGradient(listOf(Color.Transparent, colors.canvas.copy(alpha = 0.92f), colors.canvas))),
         )
-        SunsetButton(
+        AccentButton(
             text = stringResource(R.string.action_plan),
             icon = Icons.Rounded.Add,
             onClick = { adding = true },
@@ -286,7 +286,7 @@ private fun TopBar(heroDirection: Int, onJump: () -> Unit, onSettings: () -> Uni
         Text(
             buildAnnotatedString {
                 append("Weekend ")
-                withStyle(SpanStyle(fontStyle = FontStyle.Italic, brush = colors.sunset)) { append("Vibes") }
+                withStyle(SpanStyle(fontStyle = FontStyle.Italic, brush = colors.accent)) { append("Vibes") }
             },
             style = MaterialTheme.typography.headlineSmall.copy(fontFamily = Display),
             color = colors.text,
@@ -320,10 +320,10 @@ private fun Hero(card: BreakCard, today: LocalDate) {
     Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 20.dp)) {
         Overline(
             stringResource(if (today in span || days <= 6) R.string.hero_kicker_this else R.string.hero_kicker_next) + " · " + breakRange(span, today),
-            brush = colors.sunset,
+            brush = colors.accent,
         )
         Spacer(Modifier.height(12.dp))
-        val italic = SpanStyle(fontStyle = FontStyle.Italic, brush = colors.sunset)
+        val italic = SpanStyle(fontStyle = FontStyle.Italic, brush = colors.accent)
         Text(
             buildAnnotatedString {
                 when {

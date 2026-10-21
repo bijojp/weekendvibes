@@ -7,9 +7,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object TimelineRoute : NavKey
 
-/** Add an Activity, or edit [activityId]. [date] pre-fills a new Activity's day (ISO). */
 @Serializable
-data class EditorRoute(val activityId: String? = null, val date: String? = null) : NavKey
+data object SettingsRoute : NavKey
+
+/**
+ * Add an Activity, or edit [activityId]. [date] pre-fills a new Activity's day (ISO);
+ * [importLink] reads an event page to fill it in (Link import).
+ */
+@Serializable
+data class EditorRoute(val activityId: String? = null, val date: String? = null, val importLink: String? = null) : NavKey
 
 /** The Timeline is always at the bottom of the back stack. */
 class Navigator(private val backStack: NavBackStack<NavKey>) {

@@ -1,0 +1,8 @@
+<!-- Launcher background: the app's golden-hour gradient. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="315"
+        android:endColor="#FFFF4F8B"
+        android:centerColor="#FFFF7A6B"
+        android:startColor="#FFFFC36B" />
+</shape>

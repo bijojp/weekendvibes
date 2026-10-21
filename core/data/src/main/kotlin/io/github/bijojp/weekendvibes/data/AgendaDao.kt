@@ -42,4 +42,16 @@ abstract class AgendaDao {
 
     @Query("DELETE FROM extra_days WHERE date = :date")
     abstract suspend fun deleteExtraDay(date: Long)
+
+    @Query("DELETE FROM activities")
+    abstract suspend fun deleteAllActivities()
+
+    @Query("DELETE FROM extra_days")
+    abstract suspend fun deleteAllExtraDays()
+
+    @Insert
+    abstract suspend fun insertActivities(activities: List<ActivityEntity>)
+
+    @Insert
+    abstract suspend fun insertExtraDays(extraDays: List<ExtraDayEntity>)
 }

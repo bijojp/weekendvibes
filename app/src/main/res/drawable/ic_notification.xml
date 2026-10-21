@@ -1,0 +1,16 @@
+<!-- Notification mark: the launcher's sun over the horizon, as a solid silhouette. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5,15A7,7 0,0 1,19 15Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M3,17h18v2h-18z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11,3h2v3h-2zM4.2,6.6l1.4,-1.4l2.1,2.1l-1.4,1.4zM16.3,7.3l2.1,-2.1l1.4,1.4l-2.1,2.1z" />
+</vector>

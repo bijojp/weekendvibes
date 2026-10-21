@@ -2,7 +2,9 @@ package io.github.bijojp.weekendvibes.ui.editor
 
 import io.github.bijojp.weekendvibes.domain.Activity
 import io.github.bijojp.weekendvibes.domain.ActivityFields
+import io.github.bijojp.weekendvibes.domain.Limits
 import io.github.bijojp.weekendvibes.domain.ReminderLead
+import io.github.bijojp.weekendvibes.domain.eventpage.EventOption
 import io.github.bijojp.weekendvibes.ui.EditorRoute
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -24,6 +26,10 @@ internal data class Draft(
 
     fun fields(): ActivityFields = ActivityFields(title, time, location, link, notes, picture, reminder)
 
+    /** Takes the date, time and venue of one of an event page's options. */
+    fun with(option: EventOption): Draft =
+        copy(date = option.date, time = option.time, location = option.place?.take(Limits.LOCATION) ?: location)
+
     companion object {
         fun from(activity: Activity?, route: EditorRoute, today: LocalDate): Draft {
             if (activity != null) {
@@ -34,7 +40,7 @@ internal data class Draft(
             }
             // From the + button, a new Activity starts on the coming Saturday.
             val date = route.date?.let(LocalDate::parse) ?: today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
-            return Draft("", date, null, "", "", "", null, null)
+            return Draft("", date, null, "", route.importLink.orEmpty(), "", null, null)
         }
     }
 }

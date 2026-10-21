@@ -1,22 +1,20 @@
-<!-- Launcher mark: a sun rising over two days (Sat, Sun). -->
+<!-- Launcher mark: a sun rising over the horizon, in warm white on the sunset background. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:pathData="M40,64A14,14 0,0 1,68 64"
+        android:fillColor="#FFF6F1E9"
+        android:pathData="M38,62A16,16 0,0 1,70 62Z" />
+    <path
+        android:pathData="M32,70L76,70"
         android:strokeLineCap="round"
         android:strokeWidth="5"
-        android:strokeColor="#FFFFFF" />
+        android:strokeColor="#FFF6F1E9" />
     <path
-        android:pathData="M54,38L54,44M36,46L40,50M72,46L68,50"
+        android:pathData="M54,32L54,39M35,40L40,45M73,40L68,45"
         android:strokeLineCap="round"
-        android:strokeWidth="4"
-        android:strokeColor="#FFFFFF" />
-    <path
-        android:pathData="M32,72L76,72"
-        android:strokeLineCap="round"
-        android:strokeWidth="5"
-        android:strokeColor="#FFFFFF" />
+        android:strokeWidth="4.5"
+        android:strokeColor="#FFF6F1E9" />
 </vector>

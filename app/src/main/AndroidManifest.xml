@@ -3,11 +3,18 @@
     Android manifest for Weekend Vibes.
 
     Privacy notes (ADR 0001, ADR 0002):
-    - INTERNET arrives with Link import and is used for nothing else.
+    - INTERNET is used only to read event links the user shares in, and their pictures.
     - Android's cloud backup and phone-to-phone transfer are off. Data leaves the phone only as a
       backup file the user saves themselves.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Link import only (ADR 0002). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Weekend digest and Reminders. Asked for once, on first launch. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Alarms are cleared by a reboot, so they're set again afterwards. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".WeekendVibesApplication"
@@ -28,6 +35,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Link import: event links shared from a browser or a ticketing app. -->
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".reminders.ReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

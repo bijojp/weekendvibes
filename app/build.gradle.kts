@@ -69,7 +69,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2026.09.00"))
 
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
@@ -79,6 +79,8 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.2.0")
     implementation("androidx.navigation3:navigation3-ui:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
+    // Pictures are local files; Coil only decodes and caches them (no network module).
+    implementation("io.coil-kt.coil3:coil-compose:3.6.3")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 

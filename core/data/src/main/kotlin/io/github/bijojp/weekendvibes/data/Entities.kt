@@ -65,4 +65,20 @@ internal fun ActivityEntity.toDomain() = Activity(
 
 internal fun ExtraDayEntity.toDomain() = ExtraDay(LocalDate.ofEpochDay(date), label, createdAt, updatedAt)
 
+internal fun Activity.toEntity() = ActivityEntity(
+    id = id.value,
+    date = date.toEpochDay(),
+    title = title,
+    time = time?.toMinutes(),
+    location = location,
+    link = link,
+    notes = notes,
+    picture = picture,
+    reminderMinutes = reminder?.minutes,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+internal fun ExtraDay.toEntity() = ExtraDayEntity(date.toEpochDay(), label, createdAt, updatedAt)
+
 internal fun LocalTime.toMinutes(): Int = hour * 60 + minute

@@ -1,35 +1,39 @@
 package io.github.bijojp.weekendvibes.ui.timeline
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -43,15 +47,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.bijojp.weekendvibes.R
-import io.github.bijojp.weekendvibes.domain.Activity
 import io.github.bijojp.weekendvibes.domain.BreakCard
 import io.github.bijojp.weekendvibes.domain.ExtraDay
 import io.github.bijojp.weekendvibes.domain.FreeDay
@@ -59,17 +65,70 @@ import io.github.bijojp.weekendvibes.domain.Timeline
 import io.github.bijojp.weekendvibes.ui.EditorRoute
 import io.github.bijojp.weekendvibes.ui.LocalSnackbarHostState
 import io.github.bijojp.weekendvibes.ui.Navigator
+import io.github.bijojp.weekendvibes.ui.SettingsRoute
 import io.github.bijojp.weekendvibes.ui.WeekendVibesViewModel
+import io.github.bijojp.weekendvibes.ui.components.Backdrop
+import io.github.bijojp.weekendvibes.ui.components.CircleIconButton
+import io.github.bijojp.weekendvibes.ui.components.Overline
+import io.github.bijojp.weekendvibes.ui.components.Pill
+import io.github.bijojp.weekendvibes.ui.components.SunsetButton
 import io.github.bijojp.weekendvibes.ui.components.breakRange
-import io.github.bijojp.weekendvibes.ui.components.longDay
-import io.github.bijojp.weekendvibes.ui.components.timeText
-import io.github.bijojp.weekendvibes.ui.components.weekdayCaps
-import io.github.bijojp.weekendvibes.ui.theme.LocalDayColors
+import io.github.bijojp.weekendvibes.ui.components.monthName
+import io.github.bijojp.weekendvibes.ui.theme.Display
+import io.github.bijojp.weekendvibes.ui.theme.Vibes
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 /** How far ahead the Timeline reaches at first, and how much more it adds each time the end comes into view. */
 private const val WEEKS_AHEAD = 26L
+
+/** One row of the Timeline's list. */
+private sealed interface Entry {
+    val key: String
+
+    data object Memories : Entry {
+        override val key = "memories"
+    }
+
+    data class Month(val date: LocalDate, val past: Boolean) : Entry {
+        override val key = "month-$date-$past"
+    }
+
+    data class Hero(val card: BreakCard) : Entry {
+        override val key = "hero"
+    }
+
+    data class Card(val card: BreakCard) : Entry {
+        override val key = "card-${card.span.start}"
+    }
+}
+
+/** Memories (past Breaks with something in them), then the hero and This weekend, then every Break ahead, by month. */
+private fun entries(cards: List<BreakCard>): List<Entry> {
+    val list = mutableListOf<Entry>()
+    val past = cards.filter { it.isPast }
+    if (past.isNotEmpty()) list += Entry.Memories
+    var month: LocalDate? = null
+    past.forEach { card ->
+        val first = card.span.start.withDayOfMonth(1)
+        if (first != month) list += Entry.Month(first, past = true)
+        month = first
+        list += Entry.Card(card)
+    }
+    month = null
+    cards.filterNot { it.isPast }.forEach { card ->
+        val first = card.span.start.withDayOfMonth(1)
+        if (card.isThisWeekend) {
+            list += Entry.Hero(card)
+        } else if (first != month) {
+            list += Entry.Month(first, past = false)
+        }
+        month = first
+        list += Entry.Card(card)
+    }
+    return list
+}
 
 private sealed interface ExtraDayAction {
     data object Add : ExtraDayAction
@@ -80,23 +139,33 @@ private sealed interface ExtraDayAction {
 }
 
 /** The home screen: every Break in date order, opening on This weekend. */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimelineScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
     val state = viewModel.state.collectAsStateWithLifecycle().value ?: return
+    val colors = Vibes.colors
     var weeksAhead by rememberSaveable { mutableLongStateOf(WEEKS_AHEAD) }
     val cards = remember(state.agenda, state.today, weeksAhead) {
         val until = maxOf(state.today.plusWeeks(weeksAhead), state.agenda.lastDate ?: state.today)
         Timeline.build(state.agenda, state.today, until)
     }
-    val thisWeekend = cards.indexOfFirst { it.isThisWeekend }.coerceAtLeast(0)
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = thisWeekend)
+    val rows = remember(cards) { entries(cards) }
+    val heroIndex = rows.indexOfFirst { it is Entry.Hero }.coerceAtLeast(0)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = heroIndex)
     val scope = rememberCoroutineScope()
+    var adding by remember { mutableStateOf(false) }
     var extraDayAction by remember { mutableStateOf<ExtraDayAction?>(null) }
 
-    val currentThisWeekend by rememberUpdatedState(thisWeekend)
-    val awayFromThisWeekend by remember {
-        derivedStateOf { listState.layoutInfo.visibleItemsInfo.none { it.index == currentThisWeekend } }
+    val currentHero by rememberUpdatedState(heroIndex)
+    val heroDirection by remember {
+        derivedStateOf {
+            val visible = listState.layoutInfo.visibleItemsInfo
+            when {
+                visible.isEmpty() || visible.any { it.index == currentHero || it.index == currentHero + 1 } -> 0
+                visible.first().index > currentHero -> -1
+                else -> 1
+            }
+        }
     }
     val nearEnd by remember {
         derivedStateOf {
@@ -108,55 +177,83 @@ fun TimelineScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
         if (nearEnd) weeksAhead += WEEKS_AHEAD
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    if (awayFromThisWeekend) {
-                        TextButton(onClick = { scope.launch { listState.animateScrollToItem(currentThisWeekend) } }) {
-                            Text(stringResource(R.string.action_jump_this_weekend))
-                        }
-                    }
-                },
-            )
-        },
-        floatingActionButton = {
-            AddMenu(
-                onAddActivity = { nav.open(EditorRoute()) },
-                onAddExtraDay = { extraDayAction = ExtraDayAction.Add },
-            )
-        },
-        snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
-    ) { padding ->
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    Backdrop {
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 96.dp),
-            modifier = Modifier.padding(padding).fillMaxSize(),
+            contentPadding = PaddingValues(top = topInset + 72.dp, bottom = 160.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
-            items(cards, key = { it.span.start.toEpochDay() }) { card ->
-                BreakCardView(
-                    card = card,
-                    today = state.today,
-                    onAdd = { date -> nav.open(EditorRoute(date = date.toString())) },
-                    onOpen = { nav.open(EditorRoute(activityId = it.id.value)) },
-                    onEditExtraDay = { extraDayAction = ExtraDayAction.Edit(it) },
-                    onRemoveExtraDay = { extraDayAction = ExtraDayAction.Remove(it) },
-                )
+            items(rows, key = { it.key }, contentType = { it::class }) { row ->
+                when (row) {
+                    Entry.Memories -> MemoriesHeader()
+                    is Entry.Month -> MonthHeader(row.date, state.today, faded = row.past)
+                    is Entry.Hero -> Hero(row.card, state.today)
+                    is Entry.Card -> BreakCardView(
+                        card = row.card,
+                        today = state.today,
+                        onAdd = { date -> nav.open(EditorRoute(date = date.toString())) },
+                        onOpen = { nav.open(EditorRoute(activityId = it.id.value)) },
+                        onEditExtraDay = { extraDayAction = ExtraDayAction.Edit(it) },
+                        onRemoveExtraDay = { extraDayAction = ExtraDayAction.Remove(it) },
+                        modifier = Modifier.animateItem(),
+                    )
+                }
             }
         }
+
+        TopBar(
+            heroDirection = heroDirection,
+            onJump = { scope.launch { listState.animateScrollToItem(currentHero) } },
+            onSettings = { nav.open(SettingsRoute) },
+        )
+
+        // A soft fade so the button floats over the list instead of cutting it off.
+        Box(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(150.dp)
+                .background(Brush.verticalGradient(listOf(Color.Transparent, colors.canvas.copy(alpha = 0.92f), colors.canvas))),
+        )
+        SunsetButton(
+            text = stringResource(R.string.action_plan),
+            icon = Icons.Rounded.Add,
+            onClick = { adding = true },
+            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 20.dp),
+        )
+        SnackbarHost(
+            LocalSnackbarHostState.current,
+            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 88.dp),
+        )
+    }
+
+    if (adding) {
+        AddSheet(
+            onAddActivity = {
+                adding = false
+                nav.open(EditorRoute())
+            },
+            onAddExtraDay = {
+                adding = false
+                extraDayAction = ExtraDayAction.Add
+            },
+            onDismiss = { adding = false },
+        )
     }
 
     when (val action = extraDayAction) {
-        ExtraDayAction.Add -> ExtraDayDialog(
+        ExtraDayAction.Add -> ExtraDaySheet(
             existing = null,
             agenda = state.agenda,
+            today = state.today,
             onSave = viewModel::setExtraDay,
             onDismiss = { extraDayAction = null },
         )
-        is ExtraDayAction.Edit -> ExtraDayDialog(
+        is ExtraDayAction.Edit -> ExtraDaySheet(
             existing = action.extraDay,
             agenda = state.agenda,
+            today = state.today,
             onSave = viewModel::setExtraDay,
             onDismiss = { extraDayAction = null },
         )
@@ -169,189 +266,100 @@ fun TimelineScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
     }
 }
 
-/** The + button: a new Activity (next Saturday unless changed), or an Extra day. */
+/** Wordmark, a way back to This weekend once it has scrolled away, and Settings. */
 @Composable
-private fun AddMenu(onAddActivity: () -> Unit, onAddExtraDay: () -> Unit) {
-    var open by remember { mutableStateOf(false) }
-    Box {
-        FloatingActionButton(onClick = { open = true }) {
-            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.action_add))
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_add_activity)) },
-                onClick = {
-                    open = false
-                    onAddActivity()
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_add_extra_day)) },
-                onClick = {
-                    open = false
-                    onAddExtraDay()
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun BreakCardView(
-    card: BreakCard,
-    today: LocalDate,
-    onAdd: (LocalDate) -> Unit,
-    onOpen: (Activity) -> Unit,
-    onEditExtraDay: (ExtraDay) -> Unit,
-    onRemoveExtraDay: (FreeDay) -> Unit,
-) {
-    val colors = MaterialTheme.colorScheme
-    OutlinedCard(
-        colors = if (card.isThisWeekend) {
-            CardDefaults.outlinedCardColors(containerColor = colors.primaryContainer.copy(alpha = 0.35f))
-        } else {
-            CardDefaults.outlinedCardColors()
-        },
-        border = if (card.isThisWeekend) BorderStroke(2.dp, colors.primary) else CardDefaults.outlinedCardBorder(),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-    ) {
-        Column(Modifier.padding(top = 12.dp, bottom = 6.dp)) {
-            val title = cardTitle(card)
-            val range = breakRange(card.span, today)
-            Text(
-                buildAnnotatedString {
-                    if (title != null) {
-                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(title) }
-                        withStyle(SpanStyle(color = colors.onSurfaceVariant)) { append(" · $range") }
-                    } else {
-                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) { append(range) }
-                    }
-                },
-                style = MaterialTheme.typography.titleMedium,
-                color = if (card.isPast) colors.onSurfaceVariant else colors.onSurface,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-            card.days.forEach { day ->
-                DayRow(day, onAdd, onOpen, onEditExtraDay, onRemoveExtraDay)
-            }
-        }
-    }
-}
-
-/** "This weekend", "Long weekend", an Extra day's label, or null to show just the dates. */
-@Composable
-private fun cardTitle(card: BreakCard): String? {
-    val span = card.span
-    val label = card.days.firstNotNullOfOrNull { day -> day.extraDay?.label?.takeIf { it.isNotEmpty() } }
-    return when {
-        card.isThisWeekend && span.isLongWeekend -> stringResource(R.string.card_this_long_weekend)
-        card.isThisWeekend && span.isWeekend -> stringResource(R.string.card_this_weekend)
-        span.isLongWeekend -> stringResource(R.string.card_long_weekend)
-        span.isWeekend -> null
-        label != null -> label
-        else -> stringResource(R.string.card_day_off)
-    }
-}
-
-@Composable
-private fun DayRow(
-    day: FreeDay,
-    onAdd: (LocalDate) -> Unit,
-    onOpen: (Activity) -> Unit,
-    onEditExtraDay: (ExtraDay) -> Unit,
-    onRemoveExtraDay: (FreeDay) -> Unit,
-) {
-    val dayColor = LocalDayColors.current.of(day.date)
-    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp, top = 4.dp)) {
-        Column(Modifier.width(52.dp).padding(top = 10.dp)) {
-            Text(weekdayCaps(day.date), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = dayColor)
-            Text(
-                day.date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Column(Modifier.weight(1f)) {
-            day.extraDay?.label?.takeIf { it.isNotEmpty() }?.let { label ->
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = dayColor,
-                    modifier = Modifier.padding(top = 10.dp),
-                )
-            }
-            if (day.activities.isEmpty()) {
-                Text(
-                    stringResource(R.string.day_nothing_planned),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth().clickable { onAdd(day.date) }.padding(vertical = 10.dp),
-                )
-            } else {
-                day.activities.forEach { ActivityRow(it, onOpen) }
-            }
-        }
-        IconButton(onClick = { onAdd(day.date) }) {
-            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.action_add_on_day, longDay(day.date)))
-        }
-        day.extraDay?.let { extraDay ->
-            ExtraDayMenu(onEdit = { onEditExtraDay(extraDay) }, onRemove = { onRemoveExtraDay(day) })
-        }
-    }
-}
-
-@Composable
-private fun ActivityRow(activity: Activity, onOpen: (Activity) -> Unit) {
-    Column(
+private fun TopBar(heroDirection: Int, onJump: () -> Unit, onSettings: () -> Unit) {
+    val colors = Vibes.colors
+    Box(
         Modifier
             .fillMaxWidth()
-            .clickable { onOpen(activity) }
-            .padding(vertical = 8.dp),
+            .background(Brush.verticalGradient(listOf(colors.canvas, colors.canvas.copy(alpha = 0.85f), Color.Transparent)))
+            .statusBarsPadding()
+            .padding(start = 24.dp, end = 16.dp, top = 8.dp, bottom = 20.dp),
     ) {
-        val time = activity.time?.let { timeText(it) }
-        val accent = MaterialTheme.colorScheme.primary
         Text(
             buildAnnotatedString {
-                if (time != null) {
-                    withStyle(SpanStyle(color = accent, fontWeight = FontWeight.SemiBold)) { append(time) }
-                    append("  ")
-                }
-                append(activity.title)
+                append("Weekend ")
+                withStyle(SpanStyle(fontStyle = FontStyle.Italic, brush = colors.sunset)) { append("Vibes") }
             },
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.headlineSmall.copy(fontFamily = Display),
+            color = colors.text,
+            modifier = Modifier.align(Alignment.CenterStart),
         )
-        if (activity.location.isNotEmpty()) {
-            Text(
-                activity.location,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.align(Alignment.CenterEnd),
+        ) {
+            AnimatedVisibility(heroDirection != 0, enter = fadeIn() + scaleIn(initialScale = 0.8f), exit = fadeOut() + scaleOut(targetScale = 0.8f)) {
+                Pill(
+                    text = stringResource(R.string.action_jump_this_weekend),
+                    icon = if (heroDirection < 0) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                    contentPadding = PaddingValues(start = 12.dp, end = 16.dp, top = 9.dp, bottom = 9.dp),
+                    onClick = onJump,
+                )
+            }
+            CircleIconButton(Icons.Rounded.Tune, stringResource(R.string.action_settings), onSettings)
         }
     }
 }
 
+/** The big opening line: how far away the weekend is, and what's lined up. */
 @Composable
-private fun ExtraDayMenu(onEdit: () -> Unit, onRemove: () -> Unit) {
-    var open by remember { mutableStateOf(false) }
-    Box(contentAlignment = Alignment.TopEnd) {
-        IconButton(onClick = { open = true }) {
-            Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.action_extra_day_options))
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_edit_label)) },
-                onClick = {
-                    open = false
-                    onEdit()
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.action_remove_extra_day)) },
-                onClick = {
-                    open = false
-                    onRemove()
-                },
-            )
-        }
+private fun Hero(card: BreakCard, today: LocalDate) {
+    val colors = Vibes.colors
+    val span = card.span
+    val days = ChronoUnit.DAYS.between(today, span.start).toInt()
+    val plans = card.days.sumOf { it.activities.size }
+    Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 20.dp)) {
+        Overline(
+            stringResource(if (today in span || days <= 6) R.string.hero_kicker_this else R.string.hero_kicker_next) + " · " + breakRange(span, today),
+            brush = colors.sunset,
+        )
+        Spacer(Modifier.height(12.dp))
+        val italic = SpanStyle(fontStyle = FontStyle.Italic, brush = colors.sunset)
+        Text(
+            buildAnnotatedString {
+                when {
+                    today in span && span.isWeekend -> append(stringResource(R.string.hero_now_weekend))
+                    today in span -> append(stringResource(R.string.hero_now_day_off))
+                    days == 1 -> withStyle(italic) { append(stringResource(R.string.hero_tomorrow)) }
+                    else -> {
+                        withStyle(italic) { append(pluralStringResource(R.plurals.hero_days_lead, days, days)) }
+                        append(stringResource(R.string.hero_days_tail))
+                    }
+                }
+            },
+            style = MaterialTheme.typography.displayLarge,
+            color = colors.text,
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            if (plans == 0) stringResource(R.string.hero_nothing) else pluralStringResource(R.plurals.hero_planned, plans, plans),
+            style = MaterialTheme.typography.bodyLarge,
+            color = colors.textSoft,
+        )
+    }
+}
+
+@Composable
+private fun MonthHeader(date: LocalDate, today: LocalDate, faded: Boolean) {
+    val colors = Vibes.colors
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 28.dp, bottom = 10.dp),
+    ) {
+        Overline(monthName(date, today), color = if (faded) colors.textFaint else colors.textSoft)
+        Spacer(Modifier.width(12.dp))
+        Box(Modifier.weight(1f).height(1.dp).background(colors.hairline))
+    }
+}
+
+@Composable
+private fun MemoriesHeader() {
+    val colors = Vibes.colors
+    Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 4.dp)) {
+        Text(stringResource(R.string.memories), style = MaterialTheme.typography.displaySmall, color = colors.text)
+        Text(stringResource(R.string.memories_body), style = MaterialTheme.typography.bodyMedium, color = colors.textFaint)
     }
 }

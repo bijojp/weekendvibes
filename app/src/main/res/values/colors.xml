@@ -1,6 +1,5 @@
-<!-- Brand teal, the Saturday colour from the web version. -->
+<!-- Window colours, matching the Compose canvas so launch doesn't flash. -->
 <resources>
-    <color name="brand">#0F8B8D</color>
-    <color name="window_light">#F8FBFB</color>
-    <color name="window_dark">#111415</color>
+    <color name="window_light">#F7F2EA</color>
+    <color name="window_dark">#09090B</color>
 </resources>

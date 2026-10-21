@@ -4,11 +4,15 @@ import android.content.Context
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import io.github.bijojp.weekendvibes.R
 import io.github.bijojp.weekendvibes.domain.Break
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 // Dates and times as people read them, following the phone's language and 12/24-hour setting.
@@ -54,4 +58,31 @@ fun breakRange(span: Break, today: LocalDate): String {
     } else {
         "${span.start.format(dayMonth)} – ${span.end.format(day)}"
     }
+}
+
+/** "Now", "Tomorrow", "In 5 days", "In 3 weeks", "Last weekend", "2 weeks ago", "3 months ago". */
+@Composable
+fun relativeText(span: Break, today: LocalDate): String {
+    if (today in span) return stringResource(R.string.rel_now)
+    if (span.start > today) {
+        val days = ChronoUnit.DAYS.between(today, span.start).toInt()
+        return when {
+            days == 1 -> stringResource(R.string.rel_tomorrow)
+            days < 14 -> pluralStringResource(R.plurals.rel_in_days, days, days)
+            else -> pluralStringResource(R.plurals.rel_in_weeks, days / 7, days / 7)
+        }
+    }
+    val days = ChronoUnit.DAYS.between(span.end, today).toInt()
+    return when {
+        days < 7 && span.isWeekend -> stringResource(R.string.rel_last_weekend)
+        days < 7 -> pluralStringResource(R.plurals.rel_days_ago, days, days)
+        days < 60 -> pluralStringResource(R.plurals.rel_weeks_ago, days / 7, days / 7)
+        else -> pluralStringResource(R.plurals.rel_months_ago, days / 30, days / 30)
+    }
+}
+
+/** "November", or "November 2027" outside this year. */
+fun monthName(date: LocalDate, today: LocalDate): String {
+    val skeleton = if (date.year == today.year) "MMMM" else "MMMMyyyy"
+    return date.format(DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton)))
 }

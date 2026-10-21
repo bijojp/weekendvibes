@@ -7,3 +7,6 @@ local.properties
 *.iml
 *.jks
 *.keystore
+
+# Agent worktrees
+.claude/worktrees/

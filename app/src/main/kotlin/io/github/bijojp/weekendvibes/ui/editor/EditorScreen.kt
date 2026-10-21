@@ -25,12 +25,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,6 +66,12 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
     val existing = route.activityId?.let { state.agenda.activity(ActivityId(it)) }
     var draft by remember { mutableStateOf(Draft.from(existing, route, state.today)) }
     var dialog by remember { mutableStateOf<Dialog?>(null) }
+    val titleFocus = remember { FocusRequester() }
+
+    // A new Activity starts with its title, so the keyboard opens straight away.
+    LaunchedEffect(Unit) {
+        if (existing == null) titleFocus.requestFocus()
+    }
 
     fun save() {
         if (existing != null) {
@@ -104,7 +113,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
                 placeholder = { Text(stringResource(R.string.field_title_hint)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).focusRequester(titleFocus),
             )
 
             SectionHeader(stringResource(R.string.field_date))

@@ -30,7 +30,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 | Link import | Appears in Android's share sheet. Takes the first URL in the shared text and follows redirects. Opens the Activity form pre-filled; the link is always kept even if nothing else is found, and failures offer Retry. Details in §3. |
 | Settings | Digest on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About. |
 | Backup | **Back up** saves one zip (`data.json` plus a `pictures/` folder) wherever the user chooses. **Restore** replaces all data after a confirmation. (ADR 0004) |
-| Look and feel | Material 3, light and dark. Saturday teal and Sunday rose, as in the web version. English only. |
+| Look and feel | Premium and editorial rather than stock Material: a warm near-black canvas (warm paper in light mode) with slow drifting glows, Fraunces (serif, soft, large optical size) for headlines and big date numerals, Manrope for everything else, and one golden-hour gradient used for This weekend and the main actions. Saturday mint, Sunday rose, Extra days amber. Plans with a Picture are full-bleed tiles; empty days are dashed "Free · tap to plan" tiles. Cards sink slightly under the finger with a haptic tick. English only. |
 
 ### Deliberately not doing
 Recurring Activities, Activities spanning several days, duplicating an Activity, categories or colours, done/skipped tracking, search, a home-screen widget, sharing with others, accounts or sync, analytics, Android system backup, and pretending to be a link-preview bot to get past sites that block apps.
@@ -69,7 +69,7 @@ Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kot
                the WebView fallback, hand-wired dependencies.
 ```
 
-**Libraries:** Compose (BOM), Material 3, Navigation 3, Room, kotlinx.serialization, Coroutines, DataStore. For Link import: Jsoup (HTML parsing, pure Java) and the platform's `HttpURLConnection` and `WebView`. All F-Droid-friendly; no Google Play Services or Firebase. Dates use `java.time`; dependencies are wired by hand.
+**Libraries:** Compose (BOM), Material 3, Navigation 3, Room, kotlinx.serialization, Coroutines, DataStore, Coil (local Pictures only), ExifInterface. For Link import: Jsoup (HTML parsing, pure Java) and the platform's `HttpURLConnection` and `WebView`. Fonts: Fraunces and Manrope, bundled, SIL OFL (`docs/licenses/`). All F-Droid-friendly; no Google Play Services or Firebase. Dates use `java.time`; dependencies are wired by hand.
 
 **Data design:**
 - Two tables: Activities (with their date) and Extra days (keyed by date, with a label). Breaks are computed from them on every change; there is no table of weekends.
@@ -89,7 +89,7 @@ Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kot
 
 ## 5. Build order
 
-**Status (2026-10-21):** steps 1–4 are built. Domain tests pass and lint has no errors. The app hasn't been run on a phone or emulator yet, so the next session starts by installing it, then step 5.
+**Status (2026-10-21):** steps 1–8 are built, with the redesign. 58 domain and backup tests pass (including Link import against saved Bangalore pages) and lint has no errors. Installed on the phone; not yet checked by hand: the share target with real District and BookMyShow links (the WebView fallback is untested on a device), notifications firing, and backup/restore. Step 9 starts there.
 
 | Step | Milestone | Done when |
 |---|---|---|

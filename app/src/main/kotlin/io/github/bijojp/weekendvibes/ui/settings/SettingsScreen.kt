@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -155,12 +156,15 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
                     Triple(ThemeMode.Dark, R.string.theme_dark, Icons.Rounded.DarkMode),
                     Triple(ThemeMode.Light, R.string.theme_light, Icons.Rounded.LightMode),
                 ).forEach { (mode, label, icon) ->
+                    // Three equal shares of the row, so no choice is pushed off the edge.
                     Pill(
                         text = stringResource(label),
                         icon = icon,
                         selected = settings.theme == mode,
                         accent = colors.sunsetMid,
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                         onClick = { viewModel.updateSettings { it.copy(theme = mode) } },
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }

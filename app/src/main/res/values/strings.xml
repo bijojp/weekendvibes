@@ -26,7 +26,7 @@
         <item quantity="one">%1$d day</item>
         <item quantity="other">%1$d days</item>
     </plurals>
-    <string name="hero_days_tail"> to go.</string>
+    <string name="hero_days_tail">to go.</string>
     <plurals name="hero_planned">
         <item quantity="one">%1$d plan lined up</item>
         <item quantity="other">%1$d plans lined up</item>

@@ -332,6 +332,8 @@ private fun Hero(card: BreakCard, today: LocalDate) {
                     days == 1 -> withStyle(italic) { append(stringResource(R.string.hero_tomorrow)) }
                     else -> {
                         withStyle(italic) { append(pluralStringResource(R.plurals.hero_days_lead, days, days)) }
+                        // Android trims leading spaces from string resources, so the gap is added here.
+                        append(" ")
                         append(stringResource(R.string.hero_days_tail))
                     }
                 }

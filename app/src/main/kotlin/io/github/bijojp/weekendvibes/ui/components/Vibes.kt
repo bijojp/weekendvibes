@@ -199,12 +199,13 @@ fun Pill(
             .then(if (onClick != null) Modifier.pressable(onClick = onClick) else Modifier)
             .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, tint = if (selected) accent else colors.textSoft, modifier = Modifier.size(18.dp))
             Box(Modifier.size(8.dp))
         }
-        Text(text, style = MaterialTheme.typography.labelLarge, color = if (selected) accent else colors.text)
+        Text(text, style = MaterialTheme.typography.labelLarge, color = if (selected) accent else colors.text, maxLines = 1)
     }
 }
 

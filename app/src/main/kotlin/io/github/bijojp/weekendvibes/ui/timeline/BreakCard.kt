@@ -52,6 +52,7 @@ import io.github.bijojp.weekendvibes.domain.Activity
 import io.github.bijojp.weekendvibes.domain.BreakCard
 import io.github.bijojp.weekendvibes.domain.ExtraDay
 import io.github.bijojp.weekendvibes.domain.FreeDay
+import io.github.bijojp.weekendvibes.domain.isWeekendDay
 import io.github.bijojp.weekendvibes.ui.components.Overline
 import io.github.bijojp.weekendvibes.ui.components.PictureImage
 import io.github.bijojp.weekendvibes.ui.components.VibeCard
@@ -86,7 +87,7 @@ fun BreakCardView(
                     if (card.isThisWeekend) {
                         Overline(kicker(card), brush = colors.sunset)
                     } else {
-                        Overline(kicker(card), color = if (card.span.isWeekend) colors.textSoft else colors.extra)
+                        Overline(kicker(card), color = if (card.days.any { it.extraDay != null } && !card.span.isWeekend) colors.extra else colors.textSoft)
                     }
                     Spacer(Modifier.height(6.dp))
                     Text(
@@ -123,7 +124,8 @@ private fun kicker(card: BreakCard): String {
         span.isLongWeekend -> pluralStringResource(R.plurals.card_long_weekend, span.days.size, span.days.size)
         span.isWeekend -> stringResource(R.string.card_weekend)
         label != null -> label
-        else -> stringResource(R.string.card_day_off)
+        card.days.any { it.extraDay != null } -> stringResource(R.string.card_day_off)
+        else -> stringResource(R.string.card_weekday)
     }
 }
 
@@ -136,7 +138,8 @@ private fun DayBlock(
     onRemoveExtraDay: (FreeDay) -> Unit,
 ) {
     val colors = Vibes.colors
-    val dayColor = colors.dayColor(day.date)
+    // Weekend days and Extra days wear their colour; a weekday that only has plans stays neutral.
+    val dayColor = if (day.date.isWeekendDay || day.extraDay != null) colors.dayColor(day.date) else colors.textSoft
     Row {
         // The day rail: SAT over a big serif 24, and an Extra day's label and options under it.
         Column(Modifier.width(60.dp).padding(top = 2.dp)) {

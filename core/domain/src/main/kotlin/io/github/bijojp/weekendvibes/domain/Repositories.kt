@@ -8,10 +8,9 @@ interface AgendaRepository {
     /** The latest snapshot, re-emitted after every change. */
     val agenda: Flow<Agenda>
 
-    /** Putting an Activity on a weekday that isn't free marks it as an Extra day. */
+    /** Any day will do; a weekday plan shows in the Timeline on its own. */
     suspend fun addActivity(date: LocalDate, fields: ActivityFields): ActivityId
 
-    /** Moving it to a weekday that isn't free marks that day as an Extra day. */
     suspend fun editActivity(id: ActivityId, date: LocalDate, fields: ActivityFields)
 
     suspend fun deleteActivity(id: ActivityId)

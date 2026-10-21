@@ -28,17 +28,15 @@ internal class RoomAgendaRepository(
             .conflate()
             .map { dao.snapshot().toAgenda() }
 
-    override suspend fun addActivity(date: LocalDate, fields: ActivityFields): ActivityId = db.withTransaction {
+    override suspend fun addActivity(date: LocalDate, fields: ActivityFields): ActivityId {
         val time = now()
         val id = newId()
-        markFree(date)
         dao.insertActivity(fields.toEntity(id, date, createdAt = time, updatedAt = time))
-        ActivityId(id)
+        return ActivityId(id)
     }
 
-    override suspend fun editActivity(id: ActivityId, date: LocalDate, fields: ActivityFields) = db.withTransaction {
+    override suspend fun editActivity(id: ActivityId, date: LocalDate, fields: ActivityFields) {
         val existing = requireNotNull(dao.activity(id.value)) { "Activity not found" }
-        markFree(date)
         dao.updateActivity(fields.toEntity(id.value, date, existing.createdAt, updatedAt = now()))
     }
 
@@ -56,13 +54,6 @@ internal class RoomAgendaRepository(
     override suspend fun removeExtraDay(date: LocalDate) = db.withTransaction {
         dao.deleteActivitiesOn(date.toEpochDay())
         dao.deleteExtraDay(date.toEpochDay())
-    }
-
-    /** A weekday gets an Extra day so its Activities have a Free day to sit on. */
-    private suspend fun markFree(date: LocalDate) {
-        if (date.isWeekendDay || dao.extraDay(date.toEpochDay()) != null) return
-        val time = now()
-        dao.upsertExtraDay(ExtraDayEntity(date.toEpochDay(), "", time, time))
     }
 
     private fun ActivityFields.toEntity(id: String, date: LocalDate, createdAt: Long, updatedAt: Long) = ActivityEntity(

@@ -58,4 +58,12 @@ class RemindersTest {
         val gig = activity("Gig", oct(24), LocalTime.of(17, 0)).copy(reminder = ReminderLead.Day)
         assertEquals(at(10, 23, 17), Reminders.next(agenda(activities = listOf(gig)), settings, after = at(10, 23, 9)))
     }
+
+    @Test
+    fun `weekday plans get no Digest, only their own Reminders`() {
+        val dentist = activity("Dentist", oct(21), LocalTime.of(10, 0)).copy(reminder = ReminderLead.Hour)
+        val agenda = agenda(activities = listOf(dentist))
+        assertEquals(at(10, 21, 9), Reminders.next(agenda, settings, after = at(10, 20, 9)))
+        assertEquals(emptyList<Reminders.Digest>(), Reminders.digestsDue(agenda, settings, from = at(10, 20, 17), to = at(10, 20, 19)))
+    }
 }

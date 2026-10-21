@@ -2,7 +2,7 @@ package io.github.bijojp.weekendvibes.domain
 
 import java.time.LocalDate
 
-/** A run of consecutive Free days: one card in the Timeline. */
+/** A run of consecutive Free days, or one weekday with plans: one card in the Timeline. */
 data class Break(val start: LocalDate, val end: LocalDate) {
     init {
         require(start <= end) { "A Break ends on or after its start" }
@@ -10,10 +10,10 @@ data class Break(val start: LocalDate, val end: LocalDate) {
 
     val days: List<LocalDate> get() = generateSequence(start) { it.plusDays(1) }.takeWhile { it <= end }.toList()
 
-    /** Has a Saturday or Sunday in it; otherwise it's Extra days on their own. */
+    /** Has a Saturday or Sunday in it; otherwise it's Extra days, or a weekday with plans. */
     val isWeekend: Boolean get() = days.any { it.isWeekendDay }
 
-    /** A Weekend with Extra days in it. */
+    /** A Weekend with Extra days in it (weekday plans never join a Weekend). */
     val isLongWeekend: Boolean get() = isWeekend && days.any { !it.isWeekendDay }
 
     operator fun contains(date: LocalDate): Boolean = date in start..end
@@ -29,12 +29,12 @@ data class BreakCard(
     val isEmpty: Boolean get() = days.all { it.activities.isEmpty() }
 }
 
-/** One day in a card. [extraDay] is set when the user marked it. */
+/** One day in a card. [extraDay] is set when the user marked it; a weekday with plans has none. */
 data class FreeDay(val date: LocalDate, val extraDay: ExtraDay?, val activities: List<Activity>)
 
 object Timeline {
     /**
-     * Past Breaks that have Activities, then This weekend and every Break after it, up to [until].
+     * Past Breaks that have Activities, then every Break from today on (This weekend among them), up to [until].
      * A Break that runs past [until] is included whole.
      */
     fun build(agenda: Agenda, today: LocalDate, until: LocalDate): List<BreakCard> {

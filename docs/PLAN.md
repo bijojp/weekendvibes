@@ -11,7 +11,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 
 ## 1. Principles (non-negotiable)
 
-1. **Only free days exist.** Saturdays, Sundays and the Extra days the user marks. Breaks are worked out from those dates, never stored. (ADR 0003)
+1. **Weekends first.** The Timeline is built from Saturdays, Sundays and the Extra days the user marks; any other day shows only when it has plans, as a card of its own. Breaks are worked out from those dates, never stored. (ADR 0003)
 2. **One Activity, one day.** No recurrence, no multi-day Activities. (ADR 0003)
 3. **Data stays on the phone.** One user, no account, no sync, no backend, Android system backup off. Same stack as Weekly and ThingSpot. (ADR 0001)
 4. **The network is used for Link import and nothing else.** Only when the user shares a link in. No analytics, no background traffic. (ADR 0002)
@@ -23,7 +23,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 | Area | What ships |
 |---|---|
 | Timeline (home) | One list of Breaks in date order. Opens on **This weekend**; scroll up for the past, down for the future. A "This weekend" button jumps back. Every coming Break is shown, empty ones as "nothing planned"; past Breaks only if they have Activities. Each card shows its days (SAT, SUN, and any Extra days with their labels) with that day's Activities under it. Card titles: "This weekend", "Long weekend", the Extra day's label, or the date range. |
-| Activities | Title, one Free day, optional time (start only), location, link, notes, Picture, Reminder. Timed first in time order, then Anytime. Add by tapping a day in a card (that day pre-filled) or from the **+** menu (next Saturday pre-filled). Tap an Activity to edit; delete from the editor after a confirmation. Past ones are as editable as future ones; there is no done or skipped state. |
+| Activities | Title, one day (any day; weekdays without an Extra day get their own "Weekday" card), optional time (start only), location, link, notes, Picture, Reminder. Timed first in time order, then Anytime. Add by tapping a day in a card (that day pre-filled) or from the **+** menu (next Saturday pre-filled). Tap an Activity to edit; delete from the editor after a confirmation. Past ones are as editable as future ones; there is no done or skipped state. |
 | Extra days | **+** menu → "Add extra day": pick a weekday and an optional label. A Fri or Mon joins the Weekend next to it. Edit the label or remove the day from its row in the card; removing one that has Activities asks first and deletes them. |
 | Pictures | One per Activity. From Link import (downloaded, scaled to at most 1080 px) or from Android's photo picker (no storage permission). Thumbnail in the card, full size in the editor. |
 | Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms like Weekly, so up to 10 minutes late and no exact-alarm permission. |
@@ -52,7 +52,7 @@ Measured on real Bangalore pages on 2026-10-21 (plain HTTP fetch, Android Chrome
 
 **Dates:** times with an offset are converted to the phone's time zone; times without one are taken as the phone's time zone; midnight UTC (`T00:00Z`) means a date with no time. When a page has several dates or venues (BookMyShow lists one per city), the form offers a picker: venues in the Home city first, then weekend dates first.
 
-**Weekday events:** if the date isn't a Free day, the form says so ("Wed 28 Oct isn't a weekend, so it'll be added as an Extra day") and saving marks it.
+**Weekday events:** kept on their own date, as a Weekday card. Nothing is marked as an Extra day automatically (changed 2026-10-21: any day can hold a plan).
 
 ## 4. Architecture
 

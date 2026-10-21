@@ -51,9 +51,18 @@ class BreakTest {
     }
 
     @Test
-    fun `a weekday with Activities counts as free even without an Extra day`() {
-        val agenda = agenda(activities = listOf(activity("Dentist", oct(22))))
+    fun `a weekday with plans is a card of its own and never joins a Weekend`() {
+        val agenda = agenda(activities = listOf(activity("Dentist", oct(22)), activity("Movie", oct(23)), activity("Gym", oct(26))))
         assertEquals(Break(oct(22), oct(22)), agenda.breakContaining(oct(22)))
+        assertEquals(Break(oct(23), oct(23)), agenda.breakContaining(oct(23)))
+        assertEquals(Break(oct(24), oct(25)), agenda.breakContaining(oct(24)))
+        assertFalse(agenda.breakContaining(oct(23))!!.isWeekend)
+    }
+
+    @Test
+    fun `weekday plans don't change This weekend`() {
+        val agenda = agenda(activities = listOf(activity("Dentist", oct(21)), activity("Movie", oct(23))))
+        assertEquals(Break(oct(24), oct(25)), agenda.thisWeekend(oct(21)))
     }
 
     @Test

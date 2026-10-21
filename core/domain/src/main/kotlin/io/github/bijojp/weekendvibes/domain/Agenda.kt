@@ -18,12 +18,15 @@ class Agenda(val activities: List<Activity>, extraDays: List<ExtraDay>) {
     /** Timed ones first in time order, then Anytime ones. */
     fun activitiesOn(date: LocalDate): List<Activity> = activitiesByDate[date].orEmpty()
 
-    /** A date with Activities always counts, so nothing can drop out of the Timeline. */
-    fun isFree(date: LocalDate): Boolean = date.isWeekendDay || date in extraByDate || date in activitiesByDate
+    /** A Saturday, a Sunday or an Extra day: the days Breaks are made of. */
+    fun isFree(date: LocalDate): Boolean = date.isWeekendDay || date in extraByDate
 
-    /** The Break [date] is in, or null if it isn't a Free day. */
+    /**
+     * The Break [date] is in: its run of Free days, or a weekday with plans on its own (so it can't
+     * chain Weekends together). Null for a weekday with nothing on it.
+     */
     fun breakContaining(date: LocalDate): Break? {
-        if (!isFree(date)) return null
+        if (!isFree(date)) return if (date in activitiesByDate) Break(date, date) else null
         var start = date
         while (isFree(start.minusDays(1))) start = start.minusDays(1)
         var end = date
@@ -31,7 +34,7 @@ class Agenda(val activities: List<Activity>, extraDays: List<ExtraDay>) {
         return Break(start, end)
     }
 
-    /** The Break containing [today], or else the next one. */
+    /** The Weekend (or Extra days) containing [today], or else the next one. Weekday plans don't count. */
     fun thisWeekend(today: LocalDate): Break {
         // Every week has a Saturday, so this ends within six days.
         val firstFree = generateSequence(today) { it.plusDays(1) }.first(::isFree)

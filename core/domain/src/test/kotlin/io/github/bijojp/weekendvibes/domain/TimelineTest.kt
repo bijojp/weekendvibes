@@ -53,4 +53,13 @@ class TimelineTest {
         val cards = Timeline.build(agenda(), today = oct(21), until = nov(15))
         assertEquals(listOf(oct(24)), cards.filter { it.isThisWeekend }.map { it.span.start })
     }
+
+    @Test
+    fun `weekday plans get their own cards in date order, past ones only when kept`() {
+        val agenda = agenda(activities = listOf(activity("Dinner", oct(14)), activity("Dentist", oct(22)), activity("Movie", oct(23))))
+        val cards = Timeline.build(agenda, today = oct(21), until = oct(25))
+        assertEquals(listOf(oct(14), oct(22), oct(23), oct(24)), starts(cards))
+        assertEquals(listOf(oct(24)), cards.filter { it.isThisWeekend }.map { it.span.start })
+        assertTrue(cards.first().isPast)
+    }
 }

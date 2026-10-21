@@ -8,7 +8,7 @@ import java.time.LocalTime
 @JvmInline
 value class ActivityId(val value: String)
 
-/** Something on one Free day. */
+/** Something on one day: usually a Free day, but any day will do. */
 data class Activity(
     val id: ActivityId,
     val date: LocalDate,

@@ -116,11 +116,13 @@ private fun entries(cards: List<BreakCard>): List<Entry> {
         month = first
         list += Entry.Card(card)
     }
+    // The hero opens the present: it sits above the first card from today on, which may be a weekday plan.
     month = null
-    cards.filterNot { it.isPast }.forEach { card ->
+    val thisWeekend = cards.firstOrNull { it.isThisWeekend }
+    cards.filterNot { it.isPast }.forEachIndexed { index, card ->
         val first = card.span.start.withDayOfMonth(1)
-        if (card.isThisWeekend) {
-            list += Entry.Hero(card)
+        if (index == 0 && thisWeekend != null) {
+            list += Entry.Hero(thisWeekend)
         } else if (first != month) {
             list += Entry.Month(first, past = false)
         }

@@ -42,6 +42,7 @@
     </plurals>
     <string name="card_weekend">Weekend</string>
     <string name="card_day_off">Day off</string>
+    <string name="card_weekday">Weekday</string>
     <string name="day_free">Free · tap to plan</string>
     <string name="day_add_another">Add another</string>
     <string name="anytime">Anytime</string>
@@ -104,7 +105,6 @@
     <string name="field_when">When</string>
     <string name="field_time_add">Add a time</string>
     <string name="field_time_clear">Make it anytime</string>
-    <string name="field_date_becomes_extra">%1$s isn\'t a weekend, so saving marks it as a day off.</string>
     <string name="field_remind">Remind me</string>
     <string name="remind_off">Off</string>
     <string name="remind_30m">30 min before</string>

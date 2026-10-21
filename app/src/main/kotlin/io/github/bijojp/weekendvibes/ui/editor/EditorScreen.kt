@@ -66,7 +66,6 @@ import io.github.bijojp.weekendvibes.domain.Limits
 import io.github.bijojp.weekendvibes.domain.ReminderLead
 import io.github.bijojp.weekendvibes.domain.eventpage.EventOption
 import io.github.bijojp.weekendvibes.domain.eventpage.rankedFor
-import io.github.bijojp.weekendvibes.domain.isWeekendDay
 import io.github.bijojp.weekendvibes.ui.EditorRoute
 import io.github.bijojp.weekendvibes.ui.LocalSnackbarHostState
 import io.github.bijojp.weekendvibes.ui.Navigator
@@ -102,6 +101,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
     var dialog by remember { mutableStateOf<Dialog?>(null) }
     val titleFocus = remember { FocusRequester() }
     val uriHandler = LocalUriHandler.current
+    val dayAccent = if (state.agenda.isFree(draft.date)) colors.dayColor(draft.date) else colors.text
     val scroll = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
@@ -196,14 +196,14 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
                         text = mediumDay(draft.date, state.today),
                         icon = Icons.Rounded.CalendarMonth,
                         selected = true,
-                        accent = colors.dayColor(draft.date),
+                        accent = dayAccent,
                         onClick = { dialog = Dialog.Date },
                     )
                     Pill(
                         text = draft.time?.let { timeText(it) } ?: stringResource(R.string.field_time_add),
                         icon = Icons.Rounded.Schedule,
                         selected = draft.time != null,
-                        accent = colors.dayColor(draft.date),
+                        accent = dayAccent,
                         onClick = { dialog = Dialog.Time },
                     )
                     if (draft.time != null) {
@@ -212,14 +212,6 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
                             onClick = { draft = draft.copy(time = null, reminder = null) },
                         )
                     }
-                }
-                if (!state.agenda.isFree(draft.date) && !draft.date.isWeekendDay) {
-                    Text(
-                        stringResource(R.string.field_date_becomes_extra, mediumDay(draft.date, state.today)),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colors.extra,
-                        modifier = Modifier.padding(start = 4.dp, top = 10.dp),
-                    )
                 }
 
                 AnimatedVisibility(draft.time != null, enter = fadeIn() + expandVertically(), exit = fadeOut() + shrinkVertically()) {
@@ -305,7 +297,7 @@ fun EditorScreen(route: EditorRoute, viewModel: WeekendVibesViewModel, nav: Navi
     when (dialog) {
         Dialog.Date -> DatePickerDialog(
             initial = draft.date,
-            selectable = { state.agenda.isFree(it) || it == draft.date },
+            selectable = { true },
             onPicked = { draft = draft.copy(date = it) },
             onDismiss = { dialog = null },
         )

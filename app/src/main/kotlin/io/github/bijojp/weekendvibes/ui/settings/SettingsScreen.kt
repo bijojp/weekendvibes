@@ -6,10 +6,12 @@ import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
 import android.provider.Settings.EXTRA_APP_PACKAGE
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,19 +22,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CloudUpload
-import androidx.compose.material.icons.rounded.DarkMode
-import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.LocationCity
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material.icons.rounded.Restore
-import androidx.compose.material.icons.rounded.SettingsSuggest
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -46,9 +48,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -67,7 +80,6 @@ import io.github.bijojp.weekendvibes.ui.components.ConfirmDialog
 import io.github.bijojp.weekendvibes.ui.components.FieldCard
 import io.github.bijojp.weekendvibes.ui.components.FieldDivider
 import io.github.bijojp.weekendvibes.ui.components.Overline
-import io.github.bijojp.weekendvibes.ui.components.Pill
 import io.github.bijojp.weekendvibes.ui.components.VibeTextField
 import io.github.bijojp.weekendvibes.ui.components.pressable
 import io.github.bijojp.weekendvibes.ui.theme.Vibes
@@ -152,17 +164,14 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
             Overline(stringResource(R.string.settings_look), modifier = Modifier.padding(start = 4.dp, top = 28.dp, bottom = 10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 listOf(
-                    Triple(ThemeMode.System, R.string.theme_system, Icons.Rounded.SettingsSuggest),
-                    Triple(ThemeMode.Dark, R.string.theme_dark, Icons.Rounded.DarkMode),
-                    Triple(ThemeMode.Light, R.string.theme_light, Icons.Rounded.LightMode),
-                ).forEach { (mode, label, icon) ->
-                    // Three equal shares of the row, so no choice is pushed off the edge.
-                    Pill(
-                        text = stringResource(label),
-                        icon = icon,
+                    ThemeMode.System to R.string.theme_system,
+                    ThemeMode.Dark to R.string.theme_dark,
+                    ThemeMode.Light to R.string.theme_light,
+                ).forEach { (mode, label) ->
+                    ThemeTile(
+                        mode = mode,
+                        label = stringResource(label),
                         selected = settings.theme == mode,
-                        accent = colors.accentMid,
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                         onClick = { viewModel.updateSettings { it.copy(theme = mode) } },
                         modifier = Modifier.weight(1f),
                     )
@@ -211,6 +220,70 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
             onConfirm = { viewModel.restore(uri) },
             onDismiss = { restoreFrom = null },
         )
+    }
+}
+
+/** A theme choice shown as a tiny screen in that theme; System is half dark, half light. */
+@Composable
+private fun ThemeTile(mode: ThemeMode, label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = Vibes.colors
+    val shape = RoundedCornerShape(20.dp)
+    Column(
+        modifier
+            .clip(shape)
+            .background(colors.raised)
+            .border(if (selected) 2.dp else 1.dp, if (selected) colors.accentMid else colors.hairline, shape)
+            .semantics {
+                this.selected = selected
+                role = Role.RadioButton
+            }
+            .pressable(onClick = onClick)
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box {
+            ThemePreview(mode, Modifier.fillMaxWidth().height(64.dp).clip(RoundedCornerShape(14.dp)))
+            if (selected) {
+                Box(
+                    Modifier.align(Alignment.TopEnd).padding(6.dp).size(20.dp).clip(CircleShape).background(colors.accentMid),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(Icons.Rounded.Check, contentDescription = null, tint = colors.onAccent, modifier = Modifier.size(14.dp))
+                }
+            }
+        }
+        Text(
+            label,
+            style = MaterialTheme.typography.labelLarge,
+            color = if (selected) colors.text else colors.textSoft,
+            maxLines = 1,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
+}
+
+/** A miniature of the app in a theme: a card and the accent button on that theme's canvas. */
+@Composable
+private fun ThemePreview(mode: ThemeMode, modifier: Modifier = Modifier) {
+    val accent = Brush.linearGradient(listOf(Color(0xFFE3FBA8), Color(0xFF7EEBC0), Color(0xFF2CC9B5)))
+    Canvas(modifier) {
+        fun scene(canvas: Color, card: Color, line: Color) {
+            drawRect(canvas)
+            drawRoundRect(card, Offset(size.width * 0.12f, size.height * 0.18f), Size(size.width * 0.76f, size.height * 0.38f), CornerRadius(6.dp.toPx()))
+            drawRoundRect(line, Offset(size.width * 0.2f, size.height * 0.28f), Size(size.width * 0.42f, size.height * 0.07f), CornerRadius(3.dp.toPx()))
+            drawRoundRect(line, Offset(size.width * 0.2f, size.height * 0.42f), Size(size.width * 0.28f, size.height * 0.06f), CornerRadius(3.dp.toPx()))
+            drawRoundRect(accent, Offset(size.width * 0.3f, size.height * 0.68f), Size(size.width * 0.4f, size.height * 0.15f), CornerRadius(size.height))
+        }
+        val dark = { scene(Color(0xFF09090B), Color(0xFF1C1C21), Color(0xFF6F6A64)) }
+        val light = { scene(Color(0xFFF3F5F0), Color(0xFFFFFFFF), Color(0xFFC9D1CB)) }
+        when (mode) {
+            ThemeMode.Dark -> dark()
+            ThemeMode.Light -> light()
+            ThemeMode.System -> {
+                clipRect(right = size.width / 2) { dark() }
+                clipRect(left = size.width / 2) { light() }
+            }
+        }
     }
 }
 

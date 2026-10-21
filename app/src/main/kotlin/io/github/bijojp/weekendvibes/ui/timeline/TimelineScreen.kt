@@ -70,7 +70,6 @@ import io.github.bijojp.weekendvibes.ui.WeekendVibesViewModel
 import io.github.bijojp.weekendvibes.ui.components.Backdrop
 import io.github.bijojp.weekendvibes.ui.components.CircleIconButton
 import io.github.bijojp.weekendvibes.ui.components.Overline
-import io.github.bijojp.weekendvibes.ui.components.Pill
 import io.github.bijojp.weekendvibes.ui.components.AccentButton
 import io.github.bijojp.weekendvibes.ui.components.breakRange
 import io.github.bijojp.weekendvibes.ui.components.monthName
@@ -297,12 +296,13 @@ private fun TopBar(heroDirection: Int, onJump: () -> Unit, onSettings: () -> Uni
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.align(Alignment.CenterEnd),
         ) {
+            // Just an arrow, so it never crowds the wordmark: up from later Breaks, down from Memories.
             AnimatedVisibility(heroDirection != 0, enter = fadeIn() + scaleIn(initialScale = 0.8f), exit = fadeOut() + scaleOut(targetScale = 0.8f)) {
-                Pill(
-                    text = stringResource(R.string.action_jump_this_weekend),
+                CircleIconButton(
                     icon = if (heroDirection < 0) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
-                    contentPadding = PaddingValues(start = 12.dp, end = 16.dp, top = 9.dp, bottom = 9.dp),
+                    contentDescription = stringResource(R.string.action_jump_this_weekend),
                     onClick = onJump,
+                    tint = Vibes.colors.accentMid,
                 )
             }
             CircleIconButton(Icons.Rounded.Tune, stringResource(R.string.action_settings), onSettings)

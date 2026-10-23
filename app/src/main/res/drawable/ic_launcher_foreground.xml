@@ -1,20 +1,34 @@
-<!-- Launcher mark: a sun rising over the horizon, in deep teal on the Monsoon gradient. -->
+<!-- Launcher mark: a month view in deep teal where only the Saturday (mint) and Sunday (gold)
+     columns light up, on the Monsoon gradient. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Binder rings -->
     <path
         android:fillColor="#FF06201C"
-        android:pathData="M38,62A16,16 0,0 1,70 62Z" />
+        android:pathData="M40,29A2,2 0,0 1,44 29L44,35A2,2 0,0 1,40 35Z M64,29A2,2 0,0 1,68 29L68,35A2,2 0,0 1,64 35Z" />
+    <!-- Page -->
     <path
-        android:pathData="M32,70L76,70"
-        android:strokeLineCap="round"
-        android:strokeWidth="5"
-        android:strokeColor="#FF06201C" />
+        android:fillColor="#FF06201C"
+        android:pathData="M37,32L71,32A8,8 0,0 1,79 40L79,70A8,8 0,0 1,71 78L37,78A8,8 0,0 1,29 70L29,40A8,8 0,0 1,37 32Z" />
+    <!-- Month label -->
     <path
-        android:pathData="M54,32L54,39M35,40L40,45M73,40L68,45"
+        android:pathData="M35,38.5L48,38.5"
         android:strokeLineCap="round"
-        android:strokeWidth="4.5"
-        android:strokeColor="#FF06201C" />
+        android:strokeWidth="2.4"
+        android:strokeColor="#8CF6F1E9" />
+    <!-- Weekdays, Monday to Friday -->
+    <path
+        android:fillColor="#52F6F1E9"
+        android:pathData="M32.4,48a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M32.4,55a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M32.4,62a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M32.4,69a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M39.07,48a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M39.07,55a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M39.07,62a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M39.07,69a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M45.73,48a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M45.73,55a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M45.73,62a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M45.73,69a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M52.4,48a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M52.4,55a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M52.4,62a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M52.4,69a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M59.07,48a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M59.07,55a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M59.07,62a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z M59.07,69a1.6,1.6 0,1 0,3.2 0a1.6,1.6 0,1 0,-3.2 0Z" />
+    <!-- Saturday -->
+    <path
+        android:fillColor="#FF7EEBC0"
+        android:pathData="M65.03,46.8A2.3,2.3 0,0 1,69.63 46.8L69.63,70.2A2.3,2.3 0,0 1,65.03 70.2Z" />
+    <!-- Sunday -->
+    <path
+        android:fillColor="#FFFFE08A"
+        android:pathData="M71.7,46.8A2.3,2.3 0,0 1,76.3 46.8L76.3,70.2A2.3,2.3 0,0 1,71.7 70.2Z" />
 </vector>

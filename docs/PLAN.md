@@ -1,11 +1,9 @@
 # Weekend Vibes plan
 
-> "What am I doing this weekend, and what did I do last time?": a weekend-only planner and journal for Android, for personal use.
-> Everything stays local while it's being built and tested. F-Droid or Play may come later.
+> "What am I doing this weekend, and what did I do last time?": a weekend-only planner and journal for Android.
+> Released as signed APKs on GitHub. F-Droid or Play may come later.
 
 Vocabulary (Free day, Extra day, Break, Weekend, Long weekend, This weekend, Activity, Anytime, Picture, Timeline, Digest, Reminder, Link import, Home city, Backup, Check for updates, Update alert) is defined in [`GLOSSARY.md`](../GLOSSARY.md). The decisions that are hard to reverse are recorded in [`docs/adr/`](adr/). Agreed on 2026-10-21.
-
-This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" on Firebase). Nothing is carried over except the name and its link-reading logic, which moves onto the phone.
 
 ---
 
@@ -13,7 +11,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 
 1. **Weekends first.** The Timeline is built from Saturdays, Sundays and the Extra days the user marks; any other day shows only when it has plans, as a card of its own. Breaks are worked out from those dates, never stored. (ADR 0003)
 2. **One Activity, one day.** No recurrence, no multi-day Activities. (ADR 0003)
-3. **Data stays on the phone.** One user, no account, no sync, no backend, Android system backup off. Same stack as Weekly and ThingSpot. (ADR 0001)
+3. **Data stays on the phone.** One user, no account, no sync, no backend, Android system backup off. (ADR 0001)
 4. **The network is used for Link import and update checks, nothing else.** When the user shares a link in or taps Check for updates, and once a day for Update alerts (can be turned off). No analytics, no other background traffic. (ADR 0002)
 
 ## 2. Scope
@@ -26,7 +24,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 | Activities | Title, one day (any day; weekdays without an Extra day get their own "Weekday" card), optional time (start only), location, link, notes, Picture, Reminder. Timed first in time order, then Anytime. Add by tapping a day in a card (that day pre-filled) or from the **+** menu (next Saturday pre-filled). Tap an Activity to edit; delete from the editor after a confirmation. Past ones are as editable as future ones; there is no done or skipped state. |
 | Extra days | **+** menu → "Add extra day": pick a weekday and an optional label. A Fri or Mon joins the Weekend next to it. Edit the label or remove the day from its row in the card; removing one that has Activities asks first and deletes them. |
 | Pictures | One per Activity. From Link import (downloaded, scaled to at most 1080 px) or from Android's photo picker (no storage permission). Thumbnail in the card, full size in the editor. |
-| Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms like Weekly, so up to 10 minutes late and no exact-alarm permission. **Update alerts** when a newer release is on GitHub, checked once a day (on by default; added 2026-10-29). |
+| Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms, so up to 10 minutes late and no exact-alarm permission. **Update alerts** when a newer release is on GitHub, checked once a day (on by default; added 2026-10-29). |
 | Link import | Appears in Android's share sheet. Takes the first URL in the shared text and follows redirects. Opens the Activity form pre-filled; the link is always kept even if nothing else is found, and failures offer Retry. Details in §3. |
 | Settings | Digest on/off, Update alerts on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About with **Check for updates** (asks GitHub for the latest release when tapped and opens its download page if it's newer; added 2026-10-21). |
 | Backup | **Back up** saves one zip (`data.json` plus a `pictures/` folder) wherever the user chooses. **Restore** replaces all data after a confirmation. (ADR 0004) |
@@ -56,7 +54,7 @@ Measured on real Bangalore pages on 2026-10-21 (plain HTTP fetch, Android Chrome
 
 ## 4. Architecture
 
-Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kotlin, so the date rules are unit-tested without Android.
+Kotlin and Compose, split into modules (ADR 0001). The domain module is pure Kotlin, so the date rules are unit-tested without Android.
 
 ```
 :core:domain   Pure Kotlin. Activity, Extra day models. Free days → Breaks; which Breaks the
@@ -77,7 +75,7 @@ Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kot
 - The Activity table has `picture` and `reminderMinutes` from the first schema version, so later milestones don't need a migration.
 - Every Activity has a random UUID plus `createdAt` and `updatedAt`.
 
-**Notifications:** same pattern as Weekly's `ReminderScheduler`: only the next alarm is set, as a windowed AlarmManager alarm, and it's set again after any change, a reboot or a time-zone change. `POST_NOTIFICATIONS` is requested on first launch because the Digest is on by default.
+**Notifications:** `ReminderScheduler` sets only the next alarm, as a windowed AlarmManager alarm, and it's set again after any change, a reboot or a time-zone change. `POST_NOTIFICATIONS` is requested on first launch because the Digest is on by default.
 
 **Tests (domain first):**
 - Breaks: Sat+Sun, a Fri or Mon Extra day joining a Weekend, a Thu+Fri run, a standalone Wednesday, two Weekends joined by a whole week of Extra days.
@@ -104,6 +102,6 @@ Same stack and module layout as Weekly (ADR 0001). The domain module is pure Kot
 | 9 | **Polish** | Empty states, accessibility (TalkBack, large fonts), fixes from a few weekends of use. |
 
 ## 6. Decide later (not blocking v1)
-- Whether, when and how to publish (F-Droid, Play); licence; signing key (see ThingSpot's ADR 0003). "Weekend Vibes" may need checking for clashes in the stores.
+- Whether, when and how to publish on F-Droid or Play; licence. "Weekend Vibes" may need checking for clashes in the stores.
 - More site adapters, depending on which links fail in real use.
 - Categories, search, a widget, and recurring Activities, if real use asks for them.

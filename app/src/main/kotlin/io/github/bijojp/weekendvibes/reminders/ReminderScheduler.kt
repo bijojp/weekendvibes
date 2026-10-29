@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 /**
- * Keeps exactly one alarm set: the next Digest or Reminder, as in Weekly.
+ * Keeps exactly one alarm set: the next Digest or Reminder.
  * Alarms are windowed rather than exact, so no exact-alarm permission is needed and one may
  * arrive up to [WINDOW_MILLIS] late.
  */

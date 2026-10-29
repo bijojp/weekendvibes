@@ -10,4 +10,4 @@ An Activity never spans days and never repeats. A trip is one Activity per day.
 
 - **Store each Weekend as a row**: rejected. Weekends follow from the calendar; storing them would need generating, and would drift when an Extra day is added or removed.
 - **Activities with a start and an end day**: rejected. It complicates the cards, Reminders and the editor for the rare multi-day trip.
-- **Recurring Activities**: left out of v1. Weekly already handles things that repeat.
+- **Recurring Activities**: left out of v1. Weekend plans are mostly one-offs; they can come later if real use asks for them.

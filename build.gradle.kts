@@ -1,4 +1,4 @@
-// Root build file for Weekend Vibes. Same toolchain as Weekly and ThingSpot (ADR 0001).
+// Root build file for Weekend Vibes (ADR 0001).
 // Plugin versions live here so module build files stay small and readable.
 // AGP 9+ has built-in Kotlin support for Android modules, so kotlin.android is not applied.
 plugins {

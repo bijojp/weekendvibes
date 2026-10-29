@@ -1,6 +1,6 @@
 # Backup is a zip with the Pictures in it
 
-Weekly and ThingSpot back up to a single JSON file. Weekend Vibes has Pictures, so a backup is one zip file instead: `data.json` (a format version, every Activity and Extra day, and the Settings) plus a `pictures/` folder. It is written and read through the system file pickers, so no storage permission is needed. Restore replaces everything after a confirmation, and can read older format versions.
+Activities can have Pictures, so a backup is one zip file rather than a single JSON file: `data.json` (a format version, every Activity and Extra day, and the Settings) plus a `pictures/` folder. It is written and read through the system file pickers, so no storage permission is needed. Restore replaces everything after a confirmation, and can read older format versions.
 
 ## Considered Options
 

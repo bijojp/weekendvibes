@@ -13,7 +13,7 @@ import java.util.UUID
 import kotlin.math.max
 
 /**
- * Picture files in the app's private storage, as in ThingSpot's PhotoStore. Imported pictures are
+ * Picture files in the app's private storage. Imported pictures are
  * made upright, scaled to at most [MAX_EDGE] px and re-encoded as JPEG, which also drops all
  * metadata (no GPS location).
  */

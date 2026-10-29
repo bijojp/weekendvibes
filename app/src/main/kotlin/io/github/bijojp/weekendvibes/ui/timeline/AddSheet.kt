@@ -93,7 +93,7 @@ fun AddSheet(onImportLink: (String) -> Unit, onAddActivity: () -> Unit, onAddExt
     }
 }
 
-/** Paste (or type) an event link; once it holds one, "Fill it in" reads the page like a shared link. */
+/** Paste an event link to read the page like a shared link straight away, or type one and tap "Fill it in". */
 @Composable
 private fun LinkBox(onImportLink: (String) -> Unit) {
     val context = LocalContext.current
@@ -122,7 +122,9 @@ private fun LinkBox(onImportLink: (String) -> Unit) {
                                 // Read only on this tap, so Android's "pasted from your clipboard" notice means something.
                                 val clip = clipboard.getClipEntry()?.clipData
                                 val pasted = if (clip != null && clip.itemCount > 0) clip.getItemAt(0).coerceToText(context).toString() else ""
-                                text = pasted.take(Limits.LINK)
+                                // A pasted link goes straight to filling in; anything else stays in the box to fix up.
+                                val pastedLink = SharedText.firstUrl(pasted)
+                                if (pastedLink != null) onImportLink(pastedLink) else text = pasted.take(Limits.LINK)
                             }
                         },
                     )

@@ -6,6 +6,7 @@ import io.github.bijojp.weekendvibes.data.WeekendVibesData
 import io.github.bijojp.weekendvibes.imports.LinkImporter
 import io.github.bijojp.weekendvibes.reminders.Notifications
 import io.github.bijojp.weekendvibes.reminders.ReminderScheduler
+import io.github.bijojp.weekendvibes.updates.UpdateAlerts
 import io.github.bijojp.weekendvibes.updates.UpdateChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class WeekendVibesApplication : Application() {
@@ -28,6 +31,12 @@ class WeekendVibesApplication : Application() {
             combine(container.agenda.agenda, container.settings.settings, ::Pair).collectLatest { (agenda, settings) ->
                 delay(SETTLE_MILLIS)
                 ReminderScheduler.schedule(this@WeekendVibesApplication, agenda, settings)
+            }
+        }
+        // The daily check for a new version follows its switch in Settings.
+        scope.launch {
+            container.settings.settings.map { it.updateAlerts }.distinctUntilChanged().collect { on ->
+                UpdateAlerts.schedule(this@WeekendVibesApplication, on)
             }
         }
     }

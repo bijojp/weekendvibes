@@ -32,6 +32,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CloudUpload
 import androidx.compose.material.icons.rounded.LocationCity
+import androidx.compose.material.icons.rounded.NewReleases
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material.icons.rounded.Restore
@@ -163,6 +164,14 @@ fun SettingsScreen(viewModel: WeekendVibesViewModel, nav: Navigator) {
                     body = stringResource(R.string.settings_digest_body),
                     checked = settings.digestEnabled,
                     onChange = { on -> viewModel.updateSettings { it.copy(digestEnabled = on) } },
+                )
+                FieldDivider()
+                ToggleRow(
+                    icon = Icons.Rounded.NewReleases,
+                    title = stringResource(R.string.settings_update_alerts),
+                    body = stringResource(R.string.settings_update_alerts_body),
+                    checked = settings.updateAlerts,
+                    onChange = { on -> viewModel.updateSettings { it.copy(updateAlerts = on) } },
                 )
                 if (!canPost) {
                     FieldDivider()

@@ -11,16 +11,19 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import io.github.bijojp.weekendvibes.MainActivity
 import io.github.bijojp.weekendvibes.R
 import io.github.bijojp.weekendvibes.domain.Activity
+import io.github.bijojp.weekendvibes.domain.Release
 import io.github.bijojp.weekendvibes.domain.Reminders
 import io.github.bijojp.weekendvibes.ui.components.formatTime
 
-/** The two kinds of notification: the Digest before a Break, and a Reminder for one timed Activity. */
+/** The three kinds of notification: the Digest before a Break, a Reminder for one timed Activity, and an Update alert. */
 object Notifications {
     private const val CHANNEL_DIGEST = "digest"
     private const val CHANNEL_REMINDERS = "reminders"
+    private const val CHANNEL_UPDATES = "updates"
 
     fun createChannels(context: Context) {
         NotificationManagerCompat.from(context).createNotificationChannelsCompat(
@@ -32,6 +35,10 @@ object Notifications {
                 NotificationChannelCompat.Builder(CHANNEL_REMINDERS, NotificationManagerCompat.IMPORTANCE_HIGH)
                     .setName(context.getString(R.string.channel_reminders))
                     .setDescription(context.getString(R.string.channel_reminders_description))
+                    .build(),
+                NotificationChannelCompat.Builder(CHANNEL_UPDATES, NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                    .setName(context.getString(R.string.channel_updates))
+                    .setDescription(context.getString(R.string.channel_updates_description))
                     .build(),
             ),
         )
@@ -82,6 +89,26 @@ object Notifications {
             .setAutoCancel(true)
             .build()
         post(context, "reminder/${activity.id.value}/${activity.date}".hashCode(), notification)
+    }
+
+    /** Tapping it opens the release's page in the browser, where the APK is downloaded as with Check for updates. */
+    fun update(context: Context, release: Release) {
+        val openPage = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(Intent.ACTION_VIEW, release.page.toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            PendingIntent.FLAG_IMMUTABLE,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_UPDATES)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.update_alert_title, release.version))
+            .setContentText(context.getString(R.string.update_alert_text))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.update_alert_body)))
+            .setContentIntent(openPage)
+            .setAutoCancel(true)
+            .build()
+        // One id for all of them, so a newer release replaces an alert that was never opened.
+        post(context, "update".hashCode(), notification)
     }
 
     private fun post(context: Context, id: Int, notification: Notification) {

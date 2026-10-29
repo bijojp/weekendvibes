@@ -60,4 +60,7 @@ One zip file (data plus Pictures) that the user saves anywhere and can restore f
 ### Keeping the app current
 
 **Check for updates**:
-Tapping the row in Settings: the app asks GitHub for the latest release and, if it's newer than the installed version, offers to open its download page. Never done on its own; the app doesn't download or install anything itself.
+Tapping the row in Settings: the app asks GitHub for the latest release and, if it's newer than the installed version, offers to open its download page. The app doesn't download or install anything itself.
+
+**Update alert**:
+A notification that a newer release is out, from the same check made on its own about once a day while the phone is online. Sent once per version; tapping it opens the download page. On by default; turned off with "New versions" in Settings.

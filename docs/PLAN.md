@@ -3,7 +3,7 @@
 > "What am I doing this weekend, and what did I do last time?": a weekend-only planner and journal for Android, for personal use.
 > Everything stays local while it's being built and tested. F-Droid or Play may come later.
 
-Vocabulary (Free day, Extra day, Break, Weekend, Long weekend, This weekend, Activity, Anytime, Picture, Timeline, Digest, Reminder, Link import, Home city, Backup) is defined in [`GLOSSARY.md`](../GLOSSARY.md). The decisions that are hard to reverse are recorded in [`docs/adr/`](adr/). Agreed on 2026-10-21.
+Vocabulary (Free day, Extra day, Break, Weekend, Long weekend, This weekend, Activity, Anytime, Picture, Timeline, Digest, Reminder, Link import, Home city, Backup, Check for updates, Update alert) is defined in [`GLOSSARY.md`](../GLOSSARY.md). The decisions that are hard to reverse are recorded in [`docs/adr/`](adr/). Agreed on 2026-10-21.
 
 This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" on Firebase). Nothing is carried over except the name and its link-reading logic, which moves onto the phone.
 
@@ -14,7 +14,7 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 1. **Weekends first.** The Timeline is built from Saturdays, Sundays and the Extra days the user marks; any other day shows only when it has plans, as a card of its own. Breaks are worked out from those dates, never stored. (ADR 0003)
 2. **One Activity, one day.** No recurrence, no multi-day Activities. (ADR 0003)
 3. **Data stays on the phone.** One user, no account, no sync, no backend, Android system backup off. Same stack as Weekly and ThingSpot. (ADR 0001)
-4. **The network is used for Link import and Check for updates, nothing else.** Only when the user shares a link in or taps Check for updates. No analytics, no background traffic. (ADR 0002)
+4. **The network is used for Link import and update checks, nothing else.** When the user shares a link in or taps Check for updates, and once a day for Update alerts (can be turned off). No analytics, no other background traffic. (ADR 0002)
 
 ## 2. Scope
 
@@ -26,9 +26,9 @@ This replaces the older web version (PersonalProjects/weekend, "Weekend Vibes" o
 | Activities | Title, one day (any day; weekdays without an Extra day get their own "Weekday" card), optional time (start only), location, link, notes, Picture, Reminder. Timed first in time order, then Anytime. Add by tapping a day in a card (that day pre-filled) or from the **+** menu (next Saturday pre-filled). Tap an Activity to edit; delete from the editor after a confirmation. Past ones are as editable as future ones; there is no done or skipped state. |
 | Extra days | **+** menu → "Add extra day": pick a weekday and an optional label. A Fri or Mon joins the Weekend next to it. Edit the label or remove the day from its row in the card; removing one that has Activities asks first and deletes them. |
 | Pictures | One per Activity. From Link import (downloaded, scaled to at most 1080 px) or from Android's photo picker (no storage permission). Thumbnail in the card, full size in the editor. |
-| Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms like Weekly, so up to 10 minutes late and no exact-alarm permission. |
+| Notifications | **Digest** at 6 PM the evening before each Break starts (on by default; can be turned off). **Reminders** are opt-in per timed Activity: 30 min, 1 hr, 3 hr or 1 day before. Windowed alarms like Weekly, so up to 10 minutes late and no exact-alarm permission. **Update alerts** when a newer release is on GitHub, checked once a day (on by default; added 2026-10-29). |
 | Link import | Appears in Android's share sheet. Takes the first URL in the shared text and follows redirects. Opens the Activity form pre-filled; the link is always kept even if nothing else is found, and failures offer Retry. Details in §3. |
-| Settings | Digest on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About with **Check for updates** (asks GitHub for the latest release when tapped and opens its download page if it's newer; added 2026-10-21). |
+| Settings | Digest on/off, Update alerts on/off, Home city (default Bengaluru), theme (system/light/dark), **Back up** / **Restore**, About with **Check for updates** (asks GitHub for the latest release when tapped and opens its download page if it's newer; added 2026-10-21). |
 | Backup | **Back up** saves one zip (`data.json` plus a `pictures/` folder) wherever the user chooses. **Restore** replaces all data after a confirmation. (ADR 0004) |
 | Look and feel | Premium and editorial rather than stock Material: a near-black canvas (cool paper in light mode) with slow drifting glows, Fraunces (serif, soft, large optical size) for headlines and big date numerals, Manrope for everything else, and one "Monsoon" accent gradient, lime → mint → teal, used for This weekend and the main actions (chosen 2026-10-21 over golden hour, champagne, terracotta, citrus and neon lime). Saturday mint, Sunday sun-yellow, Extra days sky blue. Plans with a Picture are full-bleed tiles; empty days are dashed "Free · tap to plan" tiles. Cards sink slightly under the finger with a haptic tick. English only. |
 

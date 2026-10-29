@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonObject
 /** A published version of the app and the web page it can be downloaded from. */
 data class Release(val version: String, val page: String)
 
-/** The rules behind Check for updates (ADR 0002): reading GitHub's answer and comparing versions. */
+/** The rules behind Check for updates and Update alerts (ADR 0002): reading GitHub's answer and comparing versions. */
 object Updates {
     /** The release in GitHub's `releases/latest` JSON, or null when it doesn't describe one. */
     fun parseLatest(json: String): Release? {
@@ -27,6 +27,9 @@ object Updates {
         }
         return false
     }
+
+    /** Whether a newer release still needs an Update alert: not when one already went out for it or a later version. */
+    fun needsAlert(version: String, lastAlerted: String?): Boolean = lastAlerted == null || isNewer(version, lastAlerted)
 
     private fun numbers(version: String): List<Int>? {
         val parts = version.trim().removePrefix("v").substringBefore('-').substringBefore('+').split('.')

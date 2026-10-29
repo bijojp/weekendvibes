@@ -30,7 +30,7 @@ class BackupFormatTest {
     )
     private val rest = hike.copy(id = ActivityId("a2"), title = "Rest", time = null, location = "", link = "", notes = "", picture = null, reminder = null)
     private val diwali = ExtraDay(LocalDate.of(2026, 11, 9), "Diwali", 1, 2)
-    private val settings = Settings(digestEnabled = false, homeCity = "Mumbai", theme = ThemeMode.Dark)
+    private val settings = Settings(digestEnabled = false, homeCity = "Mumbai", theme = ThemeMode.Dark, updateAlerts = false)
 
     @Test
     fun `a backup restores exactly what was saved`() {

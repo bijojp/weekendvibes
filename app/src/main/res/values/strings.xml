@@ -143,6 +143,8 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_digest">Weekend digest</string>
     <string name="settings_digest_body">6 PM the evening before every weekend and day off</string>
+    <string name="settings_update_alerts">New versions</string>
+    <string name="settings_update_alerts_body">A notification when an update is out. Checks GitHub once a day</string>
     <string name="settings_notifications_off">Notifications are off for Weekend Vibes</string>
     <string name="settings_notifications_off_body">Tap to turn them on in system settings</string>
     <string name="settings_import">Link import</string>
@@ -167,7 +169,7 @@
     <string name="update_title">Version %1$s is out</string>
     <string name="update_body">You have %1$s. Download the APK from the release page and open it; Android updates the app and keeps your plans.</string>
     <string name="action_open_download_page">Open download page</string>
-    <string name="settings_about_body">Everything stays on this phone. The internet is used only to read links you share and to check for updates when you ask.</string>
+    <string name="settings_about_body">Everything stays on this phone. The internet is used only to read links you share and to check GitHub for new versions.</string>
     <string name="settings_fonts">Fraunces and Manrope, under the SIL Open Font License</string>
 
     <!-- Notifications -->
@@ -175,6 +177,11 @@
     <string name="channel_digest_description">The evening before each weekend or day off</string>
     <string name="channel_reminders">Reminders</string>
     <string name="channel_reminders_description">Before plans you asked to be reminded about</string>
+    <string name="channel_updates">New versions</string>
+    <string name="channel_updates_description">When a new version of Weekend Vibes is out</string>
+    <string name="update_alert_title">Weekend Vibes %1$s is available</string>
+    <string name="update_alert_text">Tap to download the update. Your plans will be kept.</string>
+    <string name="update_alert_body">Tap to open the download page and install the update. All your plans and pictures will be kept.</string>
     <string name="digest_title_weekend">Your weekend starts tomorrow</string>
     <string name="digest_title_long">Your long weekend starts tomorrow</string>
     <string name="digest_title_day_off">Your day off is tomorrow</string>

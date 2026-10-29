@@ -100,6 +100,8 @@ dependencies {
     implementation("androidx.navigation3:navigation3-runtime:1.2.0")
     implementation("androidx.navigation3:navigation3-ui:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
+    // Update alerts: a daily check that survives reboots and waits for a network.
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     // Pictures are local files; Coil only decodes and caches them (no network module).
     implementation("io.coil-kt.coil3:coil-compose:3.6.3")
 

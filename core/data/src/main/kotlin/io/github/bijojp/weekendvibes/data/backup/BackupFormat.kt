@@ -36,7 +36,7 @@ object BackupFormat {
                 format = CURRENT_FORMAT,
                 appVersion = appVersion,
                 createdAt = createdAt,
-                settings = SettingsJson(contents.settings.digestEnabled, contents.settings.homeCity, contents.settings.theme.name),
+                settings = contents.settings.run { SettingsJson(digestEnabled, homeCity, theme.name, updateAlerts) },
                 extraDays = contents.agenda.extraDays.map { ExtraDayJson(it.date.toString(), it.label, it.createdAt, it.updatedAt) },
                 activities = contents.agenda.activities.map { it.toJson() },
             ),
@@ -58,6 +58,7 @@ object BackupFormat {
                     digestEnabled = file.settings.digestEnabled,
                     homeCity = file.settings.homeCity.ifBlank { defaults.homeCity },
                     theme = ThemeMode.entries.firstOrNull { it.name == file.settings.theme } ?: defaults.theme,
+                    updateAlerts = file.settings.updateAlerts,
                 ),
             )
         }.getOrElse { throw IllegalArgumentException("Damaged backup", it) }
@@ -75,7 +76,13 @@ private data class BackupFile(
 )
 
 @Serializable
-private data class SettingsJson(val digestEnabled: Boolean = true, val homeCity: String = "", val theme: String = "")
+private data class SettingsJson(
+    val digestEnabled: Boolean = true,
+    val homeCity: String = "",
+    val theme: String = "",
+    // Backups from before 0.3.0 don't have it, so they restore with Update alerts on.
+    val updateAlerts: Boolean = true,
+)
 
 @Serializable
 private data class ExtraDayJson(val date: String, val label: String = "", val createdAt: Long = 0, val updatedAt: Long = 0)

@@ -47,6 +47,14 @@ class UpdatesTest {
     }
 
     @Test
+    fun `each new version is alerted once`() {
+        assertTrue(Updates.needsAlert("0.3.0", lastAlerted = null))
+        assertTrue(Updates.needsAlert("0.4.0", lastAlerted = "0.3.0"))
+        assertFalse(Updates.needsAlert("0.3.0", lastAlerted = "0.3.0"))
+        assertFalse(Updates.needsAlert("0.3.0", lastAlerted = "0.4.0"))
+    }
+
+    @Test
     fun `an unreadable version is never newer`() {
         assertFalse(Updates.isNewer("latest", "0.1.0"))
         assertFalse(Updates.isNewer("", "0.1.0"))

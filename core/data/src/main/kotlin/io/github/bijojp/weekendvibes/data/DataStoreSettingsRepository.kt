@@ -17,6 +17,7 @@ private val Context.settingsStore by preferencesDataStore(name = "settings")
 private val DIGEST_ENABLED = booleanPreferencesKey("digest_enabled")
 private val HOME_CITY = stringPreferencesKey("home_city")
 private val THEME = stringPreferencesKey("theme")
+private val UPDATE_ALERTS = booleanPreferencesKey("update_alerts")
 
 internal class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val store = context.settingsStore
@@ -29,6 +30,7 @@ internal class DataStoreSettingsRepository(context: Context) : SettingsRepositor
             prefs[DIGEST_ENABLED] = settings.digestEnabled
             prefs[HOME_CITY] = settings.homeCity
             prefs[THEME] = settings.theme.name
+            prefs[UPDATE_ALERTS] = settings.updateAlerts
         }
     }
 }
@@ -39,5 +41,6 @@ private fun Preferences.toSettings(): Settings {
         digestEnabled = this[DIGEST_ENABLED] ?: defaults.digestEnabled,
         homeCity = this[HOME_CITY] ?: defaults.homeCity,
         theme = this[THEME]?.let { name -> ThemeMode.entries.firstOrNull { it.name == name } } ?: defaults.theme,
+        updateAlerts = this[UPDATE_ALERTS] ?: defaults.updateAlerts,
     )
 }

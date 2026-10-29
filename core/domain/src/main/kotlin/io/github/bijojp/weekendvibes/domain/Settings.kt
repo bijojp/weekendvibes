@@ -9,6 +9,8 @@ data class Settings(
     /** Venues here are offered first when an event page lists many. */
     val homeCity: String = "Bengaluru",
     val theme: ThemeMode = ThemeMode.System,
+    /** Whether the app checks GitHub once a day and sends an Update alert for a newer release. */
+    val updateAlerts: Boolean = true,
 )
 
 interface SettingsRepository {
